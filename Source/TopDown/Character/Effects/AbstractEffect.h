@@ -5,6 +5,9 @@
 #include "CoreMinimal.h"
 #include "GameFramework/Actor.h"
 
+#include "TopDown/Character/TopDownCharacter.h"
+#include "TopDown/Util/Logger.h"
+
 #include "AbstractEffect.generated.h"
 
 UCLASS()
@@ -15,12 +18,11 @@ public:
     // Sets default values for this actor's properties
     AAbstractEffect();
 
-    void SetActor(AActor* NewActor) { ActorPtr = NewActor; };
-    virtual void Run(){};
+    virtual void Init(ATopDownCharacter* NewActor) { CharacterPtr = NewActor; };
 
 protected:
     // Called when the game starts or when spawned
     virtual void BeginPlay() override;
 
-    AActor* ActorPtr = nullptr;
+    ATopDownCharacter* CharacterPtr = nullptr;
 };

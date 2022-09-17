@@ -198,6 +198,22 @@ public:
                          TEXT("/Game/Blueprints/Widgets/Textures/T_Empty_Slot_Icon.T_Empty_Slot_Icon")));
 };
 
+USTRUCT(BlueprintType)
+struct FEffectInfo {
+    GENERATED_BODY()
+
+public:
+    UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Class")
+    FName EffectName;
+    UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Class")
+    TSubclassOf<class AAbstractEffect> EffectClass = nullptr;
+
+    UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "State")
+    float Value = 0.f;
+    UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "State")
+    int Ticks = 0;
+};
+
 UCLASS()
 class TOPDOWN_API UTopDownTypes : public UBlueprintFunctionLibrary {
     GENERATED_BODY()
