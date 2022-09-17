@@ -42,6 +42,16 @@ public:
     void ApplyDamage(AActor* DamagedActor, float Damage, const UDamageType* DamageType, AController* InstigateBy,
                      AActor* DamageCauser);
 
+    UFUNCTION()
+    void AddHealthValue(float Value) {
+        if (CurrentHealth += Value > MaxHealth) {
+            CurrentHealth = MaxHealth;
+        }
+    }
+
+    UFUNCTION()
+    void AddHealthPercent(float Value) { AddHealthValue(MaxHealth * Value / 100.f); }
+
 protected:
     // Called when the game starts
     virtual void BeginPlay() override;
