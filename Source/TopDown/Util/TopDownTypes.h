@@ -212,6 +212,9 @@ public:
     float Value = 0.f;
     UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "State")
     int Ticks = 0;
+
+    UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Widget")
+    UTexture2D* WeaponIcon = nullptr;
 };
 
 UCLASS()
