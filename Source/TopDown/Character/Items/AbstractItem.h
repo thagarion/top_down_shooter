@@ -29,7 +29,7 @@ public:
     class UProjectileMovementComponent* MovementComponent = nullptr;
 
     UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Settings")
-    float LifeTime = 5.f;
+    float LifeTime = 10.f;
 
 protected:
     // Called when the game starts or when spawned
