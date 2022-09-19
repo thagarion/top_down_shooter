@@ -95,10 +95,14 @@ public:
     void WeaponReloadStart(float ReloadingTime) { IsReloading = true; }
     UFUNCTION()
     void WeaponReloadEnd(bool IsSuccessed) { IsReloading = false; }
+
+    // Only for Debug
     UFUNCTION(BlueprintCallable)
     void DropRandomWeapon();
     UFUNCTION(BlueprintCallable)
     void DropRandomProjectile();
+    UFUNCTION(BlueprintCallable)
+    void DropRandomEffect();
 
 protected:
     UFUNCTION()
