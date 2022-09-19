@@ -199,7 +199,7 @@ public:
 };
 
 USTRUCT(BlueprintType)
-struct FEffectInfo {
+struct FEffectInfo : public FTableRowBase {
     GENERATED_BODY()
 
 public:
@@ -216,6 +216,12 @@ public:
     UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Widget")
     UTexture2D* WeaponIcon = nullptr;
 };
+
+/*USTRUCT(BlueprintType) 
+struct FEffectStats {
+    GENERATED_BODY()
+
+};*/
 
 UCLASS()
 class TOPDOWN_API UTopDownTypes : public UBlueprintFunctionLibrary {

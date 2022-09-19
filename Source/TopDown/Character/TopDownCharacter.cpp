@@ -172,7 +172,7 @@ void ATopDownCharacter::DropRandomWeapon() {
         auto WeaponInfo = std::make_shared<FWeaponInfo>();
         if (GameInctance->GetRandomWeaponInfo(*WeaponInfo) && WeaponInfo->WeaponClass != nullptr) {
             FVector CharLocation = GetActorLocation();
-            FVector SpawnLocation = {CharLocation.X, CharLocation.Y, 1000.f};
+            FVector SpawnLocation = FVector{CharLocation.X, CharLocation.Y, 1000.f} + GetActorForwardVector() * 300.f;
             FRotator SpawnRotation = GetActorRotation();
             FTransform SpawnTransform = {SpawnRotation, SpawnLocation};
             AWeaponDropItem* WeaponItem =
@@ -191,7 +191,7 @@ void ATopDownCharacter::DropRandomProjectile() {
         auto WeaponInfo = std::make_shared<FWeaponInfo>();
         if (GameInctance->GetRandomWeaponInfo(*WeaponInfo) && WeaponInfo->WeaponClass != nullptr) {
             FVector CharLocation = GetActorLocation();
-            FVector SpawnLocation = {CharLocation.X, CharLocation.Y, 1000.f};
+            FVector SpawnLocation = FVector{CharLocation.X, CharLocation.Y, 1000.f} + GetActorForwardVector() * 300.f;
             FRotator SpawnRotation = GetActorRotation();
             FTransform SpawnTransform = {SpawnRotation, SpawnLocation};
             AProjectileDropItem* ProjectileItem =
@@ -205,6 +205,8 @@ void ATopDownCharacter::DropRandomProjectile() {
         }
     }
 }
+
+void ATopDownCharacter::DropRandomEffect() {}
 
 void ATopDownCharacter::CollisionSphereBeginOverlap(UPrimitiveComponent* OverlapComponent, AActor* OtherActor,
                                                     UPrimitiveComponent* OtherComp, int32 OtherBodyIndex,

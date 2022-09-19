@@ -4,8 +4,8 @@
 
 #include <memory>
 
-#include "CoreMinimal.h"
-#include "Particles/ParticleSystem.h"
+#include "CoreMinimal.h"	
+#include "Particles/ParticleSystemComponent.h"
 
 #include "TopDown/Character/Items/AbstractItem.h"
 #include "TopDown/Util/TopDownTypes.h"
@@ -17,10 +17,10 @@ class TOPDOWN_API AEffectDropItem : public AAbstractItem {
     GENERATED_BODY()
 
 protected:
-    UPROPERTY(VisibleAnywhere, BlueprintReadOnly, meta = (AllowPrivateAccess = "true"), Category = Components)
-    UParticleSystem* ParticleSystemCircle;
-    UPROPERTY(VisibleAnywhere, BlueprintReadOnly, meta = (AllowPrivateAccess = "true"), Category = Components)
-    UParticleSystem* ParticleSystemEffect;
+    UPROPERTY(EditDefaultsOnly, Category = Particles)
+    UParticleSystemComponent* ParticleSystemCircle;
+    UPROPERTY(EditDefaultsOnly, Category = Particles)
+    UParticleSystemComponent* ParticleSystemEffect;
 
     std::shared_ptr<FEffectInfo> EffectInfo = nullptr;
 
