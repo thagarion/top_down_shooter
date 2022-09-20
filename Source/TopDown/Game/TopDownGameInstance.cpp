@@ -42,3 +42,39 @@ bool UTopDownGameInstance::GetRandomWeaponInfo(FWeaponInfo& WeaponInfo) {
     WeaponInfo.WeaponName = WeaponInfoTableNames[RandIndex];
     return true;
 }
+
+bool UTopDownGameInstance::GetEffectInfoByName(FName EffectName, FEffectInfo& EffectInfo) {
+    if (EffectInfoTable == nullptr) {
+        UE_LOG(LogTemp, Error, TEXT("Table [EffectInfoTable] not found"));
+        UE_ERROR_MESSAGE("Table [EffectInfoTable] not found");
+        return false;
+    }
+    FEffectInfo* EffectInfoOut = EffectInfoTable->FindRow<FEffectInfo>(EffectName, "", false);
+    if (EffectInfoOut == nullptr) {
+        UE_LOG(LogTemp, Error, TEXT("Effect [%s] not found in Table"), *EffectName.ToString());
+        UE_ERROR_MESSAGE("Effect [%s] not found in Table", *EffectName.ToString());
+        return false;
+    }
+    EffectInfo = *EffectInfoOut;
+    EffectInfo.EffectName = EffectName;
+    return true;
+}
+
+bool UTopDownGameInstance::GetRandomEffectInfo(FEffectInfo& EffectInfo) {
+    if (EffectInfoTable == nullptr) {
+        UE_LOG(LogTemp, Error, TEXT("Table [EffectInfoTable] not found"));
+        UE_ERROR_MESSAGE("Table [EffectInfoTable] not found");
+        return false;
+    }
+    auto EffectInfoTableNames = EffectInfoTable->GetRowNames();
+    int32 RandIndex = FMath::RandRange(1, EffectInfoTableNames.Num() - 1);
+    FEffectInfo* WeaponInfoOut = EffectInfoTable->FindRow<FEffectInfo>(EffectInfoTableNames[RandIndex], "", false);
+    if (WeaponInfoOut == nullptr) {
+        UE_LOG(LogTemp, Error, TEXT("Weapon [%s] not found in Table"), *EffectInfoTableNames[RandIndex].ToString());
+        UE_ERROR_MESSAGE("Weapon [%s] not found in Table", *EffectInfoTableNames[RandIndex].ToString());
+        return false;
+    }
+    EffectInfo = *WeaponInfoOut;
+    EffectInfo.EffectName = EffectInfoTableNames[RandIndex];
+    return true;
+}
