@@ -22,4 +22,11 @@ public:
     bool GetWeaponInfoByName(FName WeaponName, FWeaponInfo& WeaponInfo);
     UFUNCTION(BlueprintCallable)
     bool GetRandomWeaponInfo(FWeaponInfo& WeaponInfo);
+
+    UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Effect Setting")
+    UDataTable* EffectInfoTable = nullptr;
+    UFUNCTION(BlueprintCallable)
+    bool GetEffectInfoByName(FName EffectName, FEffectInfo& EffectInfo);
+    UFUNCTION(BlueprintCallable)
+    bool GetRandomEffectInfo(FEffectInfo& EffectInfo);
 };

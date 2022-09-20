@@ -206,6 +206,8 @@ public:
     UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Class")
     FName EffectName;
     UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Class")
+    TSubclassOf<class AEffectDropItem> DropClass = nullptr;
+    UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Class")
     TSubclassOf<class AAbstractEffect> EffectClass = nullptr;
 
     UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "State")
@@ -214,7 +216,7 @@ public:
     int Ticks = 0;
 
     UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Widget")
-    UTexture2D* WeaponIcon = nullptr;
+    UTexture2D* EffectIcon = nullptr;
 };
 
 /*USTRUCT(BlueprintType) 
