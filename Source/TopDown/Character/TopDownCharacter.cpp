@@ -16,6 +16,7 @@
 #include "Math/UnrealMathUtility.h"
 #include "UObject/ConstructorHelpers.h"
 
+#include "TopDown/Character/Items/EffectDropItem.h"
 #include "TopDown/Character/Items/ProjectileDropItem.h"
 #include "TopDown/Character/Items/WeaponDropItem.h"
 #include "TopDown/Game/TopDownGameInstance.h"
@@ -171,8 +172,9 @@ void ATopDownCharacter::DropRandomWeapon() {
     if (GameInctance != nullptr) {
         auto WeaponInfo = std::make_shared<FWeaponInfo>();
         if (GameInctance->GetRandomWeaponInfo(*WeaponInfo) && WeaponInfo->WeaponClass != nullptr) {
-            FVector CharLocation = GetActorLocation();
-            FVector SpawnLocation = FVector{CharLocation.X, CharLocation.Y, 1000.f} + GetActorForwardVector() * 300.f;
+            FVector CursorLocation = CursorComponent->GetComponentLocation();
+            FVector SpawnLocation = FVector{CursorLocation.X, CursorLocation.Y, 1000.f};
+            // + GetActorForwardVector() * 300.f;
             FRotator SpawnRotation = GetActorRotation();
             FTransform SpawnTransform = {SpawnRotation, SpawnLocation};
             AWeaponDropItem* WeaponItem =
@@ -190,8 +192,9 @@ void ATopDownCharacter::DropRandomProjectile() {
     if (GameInctance != nullptr) {
         auto WeaponInfo = std::make_shared<FWeaponInfo>();
         if (GameInctance->GetRandomWeaponInfo(*WeaponInfo) && WeaponInfo->WeaponClass != nullptr) {
-            FVector CharLocation = GetActorLocation();
-            FVector SpawnLocation = FVector{CharLocation.X, CharLocation.Y, 1000.f} + GetActorForwardVector() * 300.f;
+            FVector CursorLocation = CursorComponent->GetComponentLocation();
+            FVector SpawnLocation = FVector{CursorLocation.X, CursorLocation.Y, 1000.f};
+            // + GetActorForwardVector() * 300.f;
             FRotator SpawnRotation = GetActorRotation();
             FTransform SpawnTransform = {SpawnRotation, SpawnLocation};
             AProjectileDropItem* ProjectileItem =
@@ -206,7 +209,29 @@ void ATopDownCharacter::DropRandomProjectile() {
     }
 }
 
-void ATopDownCharacter::DropRandomEffect() {}
+void ATopDownCharacter::DropRandomEffect() {
+    UTopDownGameInstance* GameInctance = Cast<UTopDownGameInstance>(GetOwner()->GetGameInstance());
+    if (GameInctance != nullptr) {
+        auto EffectInfo = std::make_shared<FEffectInfo>();
+        if (GameInctance->GetRandomEffectInfo(*EffectInfo) && EffectInfo->EffectClass != nullptr) {
+            FVector CursorLocation = CursorComponent->GetComponentLocation();
+            FVector SpawnLocation = FVector{CursorLocation.X, CursorLocation.Y, 1000.f};
+            // + GetActorForwardVector() * 300.f;
+            FRotator SpawnRotation = GetActorRotation();
+            FTransform SpawnTransform = {SpawnRotation, SpawnLocation};
+            auto* EffectItem = GetWorld()->SpawnActorDeferred<AEffectDropItem>(EffectInfo->DropClass, SpawnTransform);
+
+            UE_DEBUG_MESSAGE("EffectItem SpawnActorDeferred");
+            if (EffectItem != nullptr) {
+                UE_DEBUG_MESSAGE("EffectItem != nullptr");
+                // auto Stats = std::make_shared<FWeaponStats>();
+                // Stats->StoredProjectileCount = FMath::RandRange(1, WeaponInfo->MaxProjectileCount);
+                EffectItem->Init(EffectInfo);
+                // EffectItem->FinishSpawning(FTransform(SpawnRotation, SpawnLocation));
+            }
+        }
+    }
+}
 
 void ATopDownCharacter::CollisionSphereBeginOverlap(UPrimitiveComponent* OverlapComponent, AActor* OtherActor,
                                                     UPrimitiveComponent* OtherComp, int32 OtherBodyIndex,

@@ -2,15 +2,16 @@
 
 #pragma once
 
-#include <algorithm>
-#include <vector>
-
 #include <Components/DecalComponent.h>
 #include <CoreMinimal.h>
 #include <GameFramework/Character.h>
 
-#include "TopDown/ActorComponents/InventoryComponent.h"
+#include <algorithm>
+#include <vector>
+
 #include "TopDown/ActorComponents/HealthComponent.h"
+#include "TopDown/ActorComponents/InventoryComponent.h"
+#include "TopDown/Character/Effects/AbstractEffect.h"
 #include "TopDown/Character/Weapons/AbstractWeapon.h"
 #include "TopDown/Util/Logger.h"
 #include "TopDown/Util/TopDownTypes.h"

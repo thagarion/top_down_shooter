@@ -9,6 +9,7 @@
 
 #include "TopDown/Character/Items/AbstractItem.h"
 #include "TopDown/Util/TopDownTypes.h"
+#include "TopDown/Util/Logger.h"
 
 #include "EffectDropItem.generated.h"
 
@@ -23,6 +24,14 @@ protected:
     UParticleSystemComponent* ParticleSystemEffect;
 
     std::shared_ptr<FEffectInfo> EffectInfo = nullptr;
+
+    // Called when the game starts or when spawned
+    virtual void BeginPlay() override;
+
+    // Called every frame
+    virtual void Tick(float DeltaTime) override;
+
+    virtual void BeginDestroy() override;
 
 public:
     // Sets default values for this actor's properties

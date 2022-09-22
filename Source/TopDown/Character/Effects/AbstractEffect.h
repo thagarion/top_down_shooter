@@ -5,7 +5,6 @@
 #include "CoreMinimal.h"
 #include "GameFramework/Actor.h"
 
-#include "TopDown/Character/TopDownCharacter.h"
 #include "TopDown/Util/Logger.h"
 
 #include "AbstractEffect.generated.h"
@@ -18,7 +17,7 @@ public:
     // Sets default values for this actor's properties
     AAbstractEffect();
 
-    virtual void Init(ATopDownCharacter* NewActor) { CharacterPtr = NewActor; };
+    virtual void Init(class ATopDownCharacter* NewActor) { CharacterPtr = NewActor; };
 
 protected:
     // Called when the game starts or when spawned
