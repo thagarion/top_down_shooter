@@ -20,10 +20,12 @@ AAbstractItem::AAbstractItem() {
 
     MovementComponent = CreateDefaultSubobject<UProjectileMovementComponent>(TEXT("Item Movement"));
     MovementComponent->UpdatedComponent = RootComponent;
-    MovementComponent->InitialSpeed = 2500.f;
-    MovementComponent->MaxSpeed = 0.f;
+    MovementComponent->InitialSpeed = 0.f;
+    MovementComponent->MaxSpeed = 1000.f;
+    MovementComponent->ProjectileGravityScale = 100.f;
     MovementComponent->bRotationFollowsVelocity = true;
     MovementComponent->bShouldBounce = true;
+    MovementComponent->bInitialVelocityInLocalSpace = true;
 }
 
 // Called when the game starts or when spawned

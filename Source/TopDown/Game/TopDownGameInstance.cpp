@@ -67,7 +67,7 @@ bool UTopDownGameInstance::GetRandomEffectInfo(FEffectInfo& EffectInfo) {
         return false;
     }
     auto EffectInfoTableNames = EffectInfoTable->GetRowNames();
-    int32 RandIndex = FMath::RandRange(1, EffectInfoTableNames.Num() - 1);
+    int32 RandIndex = FMath::RandRange(0, EffectInfoTableNames.Num() - 1);
     FEffectInfo* WeaponInfoOut = EffectInfoTable->FindRow<FEffectInfo>(EffectInfoTableNames[RandIndex], "", false);
     if (WeaponInfoOut == nullptr) {
         UE_LOG(LogTemp, Error, TEXT("Weapon [%s] not found in Table"), *EffectInfoTableNames[RandIndex].ToString());

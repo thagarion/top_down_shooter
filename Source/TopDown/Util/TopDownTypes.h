@@ -219,7 +219,7 @@ public:
     UTexture2D* EffectIcon = nullptr;
 };
 
-/*USTRUCT(BlueprintType) 
+/*USTRUCT(BlueprintType)
 struct FEffectStats {
     GENERATED_BODY()
 

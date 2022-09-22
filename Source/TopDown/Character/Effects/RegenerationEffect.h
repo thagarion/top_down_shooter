@@ -5,6 +5,7 @@
 #include "CoreMinimal.h"
 
 #include "TopDown/Character/Effects/AbstractEffect.h"
+#include "TopDown/Character/TopDownCharacter.h"
 
 #include "RegenerationEffect.generated.h"
 
