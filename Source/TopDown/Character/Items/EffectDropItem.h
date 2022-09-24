@@ -4,12 +4,12 @@
 
 #include <memory>
 
-#include "CoreMinimal.h"	
+#include "CoreMinimal.h"
 #include "Particles/ParticleSystemComponent.h"
 
 #include "TopDown/Character/Items/AbstractItem.h"
-#include "TopDown/Util/TopDownTypes.h"
 #include "TopDown/Util/Logger.h"
+#include "TopDown/Util/TopDownTypes.h"
 
 #include "EffectDropItem.generated.h"
 
@@ -31,8 +31,6 @@ protected:
     // Called every frame
     virtual void Tick(float DeltaTime) override;
 
-    virtual void BeginDestroy() override;
-
 public:
     // Sets default values for this actor's properties
     AEffectDropItem();
@@ -40,5 +38,7 @@ public:
     void Init(std::shared_ptr<FEffectInfo> Info);
 
     UFUNCTION(BlueprintCallable)
-    FEffectInfo GetEffectStats() { return *EffectInfo; }
+    FEffectInfo GetEffectInfo() { return *EffectInfo; }
+
+    std::shared_ptr<FEffectInfo> GetEffectInfoPtr() { return EffectInfo; }
 };

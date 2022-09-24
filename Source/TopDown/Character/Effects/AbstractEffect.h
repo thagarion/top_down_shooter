@@ -2,26 +2,38 @@
 
 #pragma once
 
+#include <memory>
+
 #include "CoreMinimal.h"
 #include "GameFramework/Actor.h"
 
 #include "TopDown/Util/Logger.h"
+#include "TopDown/Util/TopDownTypes.h"
 
 #include "AbstractEffect.generated.h"
 
 UCLASS()
-class TOPDOWN_API AAbstractEffect : public AActor {
+class TOPDOWN_API UAbstractEffect : public UObject {
     GENERATED_BODY()
+
+protected:
+    bool IsActive = true;
+    class ATopDownCharacter* CharacterPtr = nullptr;
+    std::shared_ptr<FEffectInfo> EffectInfo = nullptr;
 
 public:
     // Sets default values for this actor's properties
-    AAbstractEffect();
+    UAbstractEffect() = default;
 
-    virtual void Init(class ATopDownCharacter* NewActor) { CharacterPtr = NewActor; };
+    virtual void Init(class ATopDownCharacter* Actor, std::shared_ptr<FEffectInfo> Info) {
+        CharacterPtr = Actor;
+        EffectInfo = Info;
+    };
 
-protected:
-    // Called when the game starts or when spawned
-    virtual void BeginPlay() override;
+    virtual bool GetIsActive() const { return IsActive; }
 
-    ATopDownCharacter* CharacterPtr = nullptr;
+    UFUNCTION(BlueprintCallable)
+    FEffectInfo GetEffectInfo() { return *EffectInfo; }
+
+    std::shared_ptr<FEffectInfo> GetEffectInfoPtr() { return EffectInfo; }
 };

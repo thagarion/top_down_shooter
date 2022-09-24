@@ -117,19 +117,26 @@ protected:
 private:
     /** Top down camera */
     UPROPERTY(Category = Camera, VisibleAnywhere, BlueprintReadOnly, meta = (AllowPrivateAccess = "true"))
-    class UCameraComponent* TopDownCameraComponent;
+    class UCameraComponent* TopDownCameraComponent = nullptr;
 
     /** Camera boom positioning the camera above the character */
     UPROPERTY(Category = Camera, VisibleAnywhere, BlueprintReadOnly, meta = (AllowPrivateAccess = "true"))
-    class USpringArmComponent* CameraBoom;
+    class USpringArmComponent* CameraBoom = nullptr;
 
     /** Inventory Component **/
     UPROPERTY(Category = Inventory, VisibleAnywhere, BlueprintReadOnly, meta = (AllowPrivateAccess = "true"))
-    class UInventoryComponent* InventoryComponent;
+    class UInventoryComponent* InventoryComponent = nullptr;
 
     /** Health Component **/
     UPROPERTY(Category = Health, VisibleAnywhere, BlueprintReadOnly, meta = (AllowPrivateAccess = "true"))
-    class UHealthComponent* HealthComponent;
+    class UHealthComponent* HealthComponent = nullptr;
+
+    /** Effect Particle Component **/
+    UPROPERTY(EditDefaultsOnly, Category = Particles)
+    UParticleSystemComponent* ParticleSystemEffect = nullptr;
+
+    UPROPERTY(Category = Effects, VisibleAnywhere, BlueprintReadOnly, meta = (AllowPrivateAccess = "true"))
+    TArray<class UAbstractEffect*> ActiveEffects;
 
     float XAxis = 0.0f;
     float YAxis = 0.0f;
@@ -138,6 +145,8 @@ private:
     float YMouse = 0.0f;
 
     FRotator CurrentRotation;
+
+    class UTopDownGameInstance* GameInctance = nullptr;
 
     class UDecalComponent* CursorComponent = nullptr;
 
@@ -192,6 +201,8 @@ private:
 
     void CameraZoom(float Value);
     void CameraAimZoom();
+
+    void EffectTick();
 
     void ChangeMovementState(EMovementState State);
     void ChangeMovementStateOnPressed(EMovementState State);

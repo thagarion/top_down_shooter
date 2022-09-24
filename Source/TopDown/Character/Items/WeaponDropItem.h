@@ -16,6 +16,10 @@ UCLASS()
 class TOPDOWN_API AWeaponDropItem : public AAbstractItem {
     GENERATED_BODY()
 
+protected:
+    std::shared_ptr<FWeaponStats> WeaponStats = nullptr;
+    std::shared_ptr<FWeaponInfo> WeaponInfo = nullptr;
+
 public:
     // Sets default values for this actor's properties
     AWeaponDropItem();
@@ -27,11 +31,4 @@ public:
 
     UFUNCTION(BlueprintCallable)
     FWeaponInfo GetWeaponInfo() { return *WeaponInfo; }
-
-protected:
-    // Called when the game starts or when spawned
-    virtual void BeginPlay() override;
-
-    std::shared_ptr<FWeaponStats> WeaponStats = nullptr;
-    std::shared_ptr<FWeaponInfo> WeaponInfo = nullptr;
 };

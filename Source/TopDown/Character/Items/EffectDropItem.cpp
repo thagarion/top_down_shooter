@@ -11,26 +11,20 @@ AEffectDropItem::AEffectDropItem() {
     ParticleSystemCircle->SetupAttachment(RootComponent);
     ParticleSystemEffect = CreateDefaultSubobject<UParticleSystemComponent>(TEXT("Effect"));
     ParticleSystemEffect->SetupAttachment(RootComponent);
+
+    MovementComponent->bRotationFollowsVelocity = false;
 }
 
 // Called when the game starts or when spawned
 void AEffectDropItem::BeginPlay() {
     Super::BeginPlay();
-    UE_DEBUG_MESSAGE("AEffectDropItem::BeginPlay");
 }
 
 // Called every frame
 void AEffectDropItem::Tick(float DeltaTime) {
     Super::Tick(DeltaTime);
-    UE_DEBUG_MESSAGE("AEffectDropItem::Tick");
-}
-
-void AEffectDropItem::BeginDestroy() {
-    Super::BeginDestroy();
-    UE_DEBUG_MESSAGE("AEffectDropItem::BeginDestroy");
 }
 
 void AEffectDropItem::Init(std::shared_ptr<FEffectInfo> Info) {
     EffectInfo = Info;
-    UE_DEBUG_MESSAGE("AEffectDropItem::Init");
 }

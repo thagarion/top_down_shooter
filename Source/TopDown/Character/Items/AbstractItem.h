@@ -4,6 +4,7 @@
 
 #include "Components/SceneComponent.h"
 #include "Components/SphereComponent.h"
+#include "Components/WidgetComponent.h"
 #include "CoreMinimal.h"
 #include "GameFramework/Actor.h"
 #include "GameFramework/ProjectileMovementComponent.h"
@@ -27,9 +28,11 @@ public:
     class USphereComponent* CollisionSphereComponent = nullptr;
     UPROPERTY(VisibleAnywhere, BlueprintReadOnly, meta = (AllowPrivateAccess = "true"), Category = Components)
     class UProjectileMovementComponent* MovementComponent = nullptr;
+    UPROPERTY(VisibleAnywhere, BlueprintReadOnly, meta = (AllowPrivateAccess = "true"), Category = Components)
+    class UWidgetComponent* WidgetComponent = nullptr;
 
     UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Settings")
-    float LifeTime = 10.f;
+    float LifeTime = 60.f;
 
 protected:
     // Called when the game starts or when spawned

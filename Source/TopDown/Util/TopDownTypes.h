@@ -208,22 +208,21 @@ public:
     UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Class")
     TSubclassOf<class AEffectDropItem> DropClass = nullptr;
     UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Class")
-    TSubclassOf<class AAbstractEffect> EffectClass = nullptr;
+    TSubclassOf<class UAbstractEffect> EffectClass = nullptr;
 
     UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "State")
     float Value = 0.f;
     UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "State")
-    int Ticks = 0;
+    int Seconds = 0;
 
     UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Widget")
     UTexture2D* EffectIcon = nullptr;
+
+    UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Effect")
+    UParticleSystem* Circle = nullptr;
+    UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Effect")
+    UParticleSystem* Effect = nullptr;
 };
-
-/*USTRUCT(BlueprintType)
-struct FEffectStats {
-    GENERATED_BODY()
-
-};*/
 
 UCLASS()
 class TOPDOWN_API UTopDownTypes : public UBlueprintFunctionLibrary {

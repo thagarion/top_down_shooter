@@ -1,6 +1,7 @@
 // Copyright Epic Games, Inc. All Rights Reserved.
 
 #include "TopDown/ActorComponents/HealthComponent.h"
+
 #include "TopDown/Util/Logger.h"
 
 // Sets default values for this component's properties
@@ -13,8 +14,6 @@ UHealthComponent::UHealthComponent() {
 // Called when the game starts
 void UHealthComponent::BeginPlay() {
     Super::BeginPlay();
-
-    CurrentHealth = MaxHealth;
 
     GetOwner()->OnTakeAnyDamage.AddDynamic(this, &UHealthComponent::ApplyDamage);
 }
@@ -37,4 +36,14 @@ void UHealthComponent::ApplyDamage(AActor* DamagedActor, float Damage, const UDa
     if (CurrentHealth <= 0) {
         OnDead.Broadcast();
     }
+}
+
+inline void UHealthComponent::AddHealthValue(float Value) {
+    auto NewHealth = CurrentHealth + Value;
+    if (NewHealth >= MaxHealth) {
+        CurrentHealth = MaxHealth;
+    } else {
+        CurrentHealth = NewHealth;
+    }
+    OnHealthChange.Broadcast(MaxHealth, CurrentHealth, ShieldAmount);
 }
