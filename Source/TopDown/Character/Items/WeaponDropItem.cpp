@@ -10,14 +10,6 @@ AWeaponDropItem::AWeaponDropItem() {
     PrimaryActorTick.bCanEverTick = false;
 }
 
-// Called when the game starts or when spawned
-void AWeaponDropItem::BeginPlay() {
-    Super::BeginPlay();
-
-    LifeTime = 60.f;
-    SetLifeSpan(LifeTime);
-}
-
 // Called every frame
 void AWeaponDropItem::Tick(float DeltaTime) { Super::Tick(DeltaTime); }
 

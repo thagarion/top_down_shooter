@@ -26,6 +26,12 @@ AAbstractItem::AAbstractItem() {
     MovementComponent->bRotationFollowsVelocity = true;
     MovementComponent->bShouldBounce = true;
     MovementComponent->bInitialVelocityInLocalSpace = true;
+
+    WidgetComponent = CreateDefaultSubobject<UWidgetComponent>(TEXT("Pick Up Widget"));
+    WidgetComponent->SetupAttachment(MeshComponent);
+    WidgetComponent->SetWidgetSpace(EWidgetSpace::Screen);
+    WidgetComponent->SetDrawSize({150.f, 150.f});
+
 }
 
 // Called when the game starts or when spawned

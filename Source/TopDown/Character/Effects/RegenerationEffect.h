@@ -4,28 +4,27 @@
 
 #include "CoreMinimal.h"
 
-#include "TopDown/Character/Effects/AbstractEffect.h"
-#include "TopDown/Character/TopDownCharacter.h"
+#include "TopDown/Character/Effects/TimerEffect.h"
 
 #include "RegenerationEffect.generated.h"
 
 UCLASS()
-class TOPDOWN_API ARegenerationEffect : public AAbstractEffect {
+class TOPDOWN_API URegenerationEffect : public UTimerEffect {
     GENERATED_BODY()
 
 protected:
-    UHealthComponent* HealthComponentPtr = nullptr;
+    float Value = 0.f;
 
-    float HealthValue = 5.f;
-    int Ticks = 10;
+    virtual void Tick() override {
+        UTimerEffect::Tick();
+        if (IsActive) {
+            HealthComponentPtr->AddHealthValue(Value);
+        }
+    }
 
 public:
-    // Sets default values for this actor's properties
-    ARegenerationEffect();
-
-    // Called every frame.
-    virtual void Tick(float DeltaSeconds) override;
-
-    void Init(ATopDownCharacter* NewActor) override;
-
+    void Init(class ATopDownCharacter* Actor, std::shared_ptr<FEffectInfo> Info) override {
+        UTimerEffect::Init(Actor, Info);
+        Value = Info->Value / Info->Seconds;
+    }
 };

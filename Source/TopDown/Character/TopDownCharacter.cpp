@@ -14,6 +14,7 @@
 #include "Kismet/KismetMathLibrary.h"
 #include "Materials/Material.h"
 #include "Math/UnrealMathUtility.h"
+#include "Particles/ParticleSystemComponent.h"
 #include "UObject/ConstructorHelpers.h"
 
 #include "TopDown/Character/Items/EffectDropItem.h"
@@ -66,6 +67,8 @@ ATopDownCharacter::ATopDownCharacter() {
 void ATopDownCharacter::BeginPlay() {
     Super::BeginPlay();
 
+    GameInctance = Cast<UTopDownGameInstance>(GetOwner()->GetGameInstance());
+
     InventoryComponent->SetDefaultWeapon(DefaultWeaponName);
     SetCurrentWeapon();
 
@@ -103,6 +106,8 @@ void ATopDownCharacter::Tick(float DeltaSeconds) {
         CurrentWeapon->UpdateStateWeapon(MovementState);
     }
 
+    EffectTick();
+
     CameraZoom(DeltaSeconds);
     CameraAimZoom();
 }
@@ -113,10 +118,6 @@ void ATopDownCharacter::SetupPlayerInputComponent(UInputComponent* InComponent) 
     InComponent->BindAxis(TEXT("MoveForward"), this, &ATopDownCharacter::MoveForwardInput);
     InComponent->BindAxis(TEXT("MoveRight"), this, &ATopDownCharacter::MoveRightInput);
     InComponent->BindAxis(TEXT("CameraZoom"), this, &ATopDownCharacter::CameraZoomInput);
-
-    // Called from Character BP
-    // InComponent->BindAction(TEXT("Fire"), EInputEvent::IE_Pressed, this, &ATopDownCharacter::FireButtonPressed);
-    // InComponent->BindAction(TEXT("Fire"), EInputEvent::IE_Released, this, &ATopDownCharacter::FireButtonReleased);
 
     InComponent->BindAction(TEXT("Aim"), EInputEvent::IE_Pressed, this, &ATopDownCharacter::AimButtonPressed);
     InComponent->BindAction(TEXT("Aim"), EInputEvent::IE_Released, this, &ATopDownCharacter::AimButtonReleased);
@@ -153,11 +154,6 @@ void ATopDownCharacter::SlotInputButtonPressed(int SlotID) {
             IsWeaponSwitched = InventoryComponent->SwitchCurrentWeaponStats(SlotID);
         } else {
             IsWeaponSwitched = InventoryComponent->SwitchDefaultWeapon();
-
-            /*if (IsWeaponSwitched)
-            {
-                OnWeaponSwitchDefault.Broadcast();
-            }*/
         }
         if (IsWeaponSwitched) {
             CurrentWeapon->StopReloading();
@@ -168,13 +164,11 @@ void ATopDownCharacter::SlotInputButtonPressed(int SlotID) {
 }
 
 void ATopDownCharacter::DropRandomWeapon() {
-    UTopDownGameInstance* GameInctance = Cast<UTopDownGameInstance>(GetOwner()->GetGameInstance());
     if (GameInctance != nullptr) {
         auto WeaponInfo = std::make_shared<FWeaponInfo>();
         if (GameInctance->GetRandomWeaponInfo(*WeaponInfo) && WeaponInfo->WeaponClass != nullptr) {
             FVector CursorLocation = CursorComponent->GetComponentLocation();
             FVector SpawnLocation = FVector{CursorLocation.X, CursorLocation.Y, 1000.f};
-            // + GetActorForwardVector() * 300.f;
             FRotator SpawnRotation = GetActorRotation();
             FTransform SpawnTransform = {SpawnRotation, SpawnLocation};
             AWeaponDropItem* WeaponItem =
@@ -188,13 +182,11 @@ void ATopDownCharacter::DropRandomWeapon() {
 }
 
 void ATopDownCharacter::DropRandomProjectile() {
-    UTopDownGameInstance* GameInctance = Cast<UTopDownGameInstance>(GetOwner()->GetGameInstance());
     if (GameInctance != nullptr) {
         auto WeaponInfo = std::make_shared<FWeaponInfo>();
         if (GameInctance->GetRandomWeaponInfo(*WeaponInfo) && WeaponInfo->WeaponClass != nullptr) {
             FVector CursorLocation = CursorComponent->GetComponentLocation();
             FVector SpawnLocation = FVector{CursorLocation.X, CursorLocation.Y, 1000.f};
-            // + GetActorForwardVector() * 300.f;
             FRotator SpawnRotation = GetActorRotation();
             FTransform SpawnTransform = {SpawnRotation, SpawnLocation};
             AProjectileDropItem* ProjectileItem =
@@ -210,24 +202,17 @@ void ATopDownCharacter::DropRandomProjectile() {
 }
 
 void ATopDownCharacter::DropRandomEffect() {
-    UTopDownGameInstance* GameInctance = Cast<UTopDownGameInstance>(GetOwner()->GetGameInstance());
     if (GameInctance != nullptr) {
         auto EffectInfo = std::make_shared<FEffectInfo>();
         if (GameInctance->GetRandomEffectInfo(*EffectInfo) && EffectInfo->EffectClass != nullptr) {
             FVector CursorLocation = CursorComponent->GetComponentLocation();
             FVector SpawnLocation = FVector{CursorLocation.X, CursorLocation.Y, 1000.f};
-            // + GetActorForwardVector() * 300.f;
             FRotator SpawnRotation = GetActorRotation();
             FTransform SpawnTransform = {SpawnRotation, SpawnLocation};
             auto* EffectItem = GetWorld()->SpawnActorDeferred<AEffectDropItem>(EffectInfo->DropClass, SpawnTransform);
-
-            UE_DEBUG_MESSAGE("EffectItem SpawnActorDeferred");
             if (EffectItem != nullptr) {
-                UE_DEBUG_MESSAGE("EffectItem != nullptr");
-                // auto Stats = std::make_shared<FWeaponStats>();
-                // Stats->StoredProjectileCount = FMath::RandRange(1, WeaponInfo->MaxProjectileCount);
                 EffectItem->Init(EffectInfo);
-                // EffectItem->FinishSpawning(FTransform(SpawnRotation, SpawnLocation));
+                EffectItem->FinishSpawning(FTransform(SpawnRotation, SpawnLocation));
             }
         }
     }
@@ -239,11 +224,23 @@ void ATopDownCharacter::CollisionSphereBeginOverlap(UPrimitiveComponent* Overlap
     WeaponDropItem = Cast<AWeaponDropItem>(OtherActor);
     if (!IsOverlappedItem && WeaponDropItem != nullptr) {
         IsOverlappedItem = true;
+        return;
     }
 
-    AProjectileDropItem* OverlappedItem = Cast<AProjectileDropItem>(OtherActor);
-    if (OverlappedItem != nullptr && InventoryComponent->AddAmmo(OverlappedItem)) {
+    AProjectileDropItem* ProjectileDropItem = Cast<AProjectileDropItem>(OtherActor);
+    if (ProjectileDropItem != nullptr && InventoryComponent->AddAmmo(ProjectileDropItem)) {
         OtherActor->Destroy();
+        return;
+    }
+
+    AEffectDropItem* EffectDropItem = Cast<AEffectDropItem>(OtherActor);
+    if (EffectDropItem != nullptr) {
+        auto EffectInfo = EffectDropItem->GetEffectInfoPtr();
+        auto Effect = NewObject<UAbstractEffect>(GetTransientPackage(), EffectInfo->EffectClass);
+        Effect->Init(this, EffectInfo);
+        ActiveEffects.Add(Effect);
+        OtherActor->Destroy();
+        return;
     }
 }
 
@@ -351,6 +348,15 @@ void ATopDownCharacter::CameraAimZoom() {
     if (MovementState == EMovementState::AIM_State || MovementState == EMovementState::AIM_WALK_State) {
         const FVector MiddlePoint = (GetActorLocation() + CursorComponent->GetComponentLocation()) / 2;
         CameraBoom->SetWorldLocation(FVector(MiddlePoint.X, MiddlePoint.Y, CameraBoom->GetComponentLocation().Z));
+    }
+}
+
+void ATopDownCharacter::EffectTick() {
+    for (auto& Effect : ActiveEffects) {
+        if (!Effect->GetIsActive()) {
+            ActiveEffects.Remove(Effect);
+        }
+        
     }
 }
 

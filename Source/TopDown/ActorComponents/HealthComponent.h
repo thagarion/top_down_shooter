@@ -17,7 +17,7 @@ class TOPDOWN_API UHealthComponent : public UActorComponent {
 
 protected:
     float MaxHealth = 100.f;
-    float CurrentHealth = MaxHealth;
+    float CurrentHealth = MaxHealth * 0.2;
     float ShieldAmount = MaxHealth * 0.5;
 
 public:
@@ -33,7 +33,7 @@ public:
     UHealthComponent();
 
     UFUNCTION(BlueprintCallable)
-    float GetMaxHealth() { return MaxHealth; }
+    float GetMaxHealth() { return CurrentHealth; }
 
     UFUNCTION(BlueprintCallable)
     float GetShieldAmount() { return ShieldAmount; }
@@ -43,11 +43,7 @@ public:
                      AActor* DamageCauser);
 
     UFUNCTION()
-    void AddHealthValue(float Value) {
-        if (CurrentHealth += Value > MaxHealth) {
-            CurrentHealth = MaxHealth;
-        }
-    }
+    void AddHealthValue(float Value);
 
     UFUNCTION()
     void AddHealthPercent(float Value) { AddHealthValue(MaxHealth * Value / 100.f); }
