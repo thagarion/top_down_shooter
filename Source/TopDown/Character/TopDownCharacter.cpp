@@ -17,6 +17,7 @@
 #include "Particles/ParticleSystemComponent.h"
 #include "UObject/ConstructorHelpers.h"
 
+#include "TopDown/Character/Effects/AbstractEffect.h"
 #include "TopDown/Character/Items/EffectDropItem.h"
 #include "TopDown/Character/Items/ProjectileDropItem.h"
 #include "TopDown/Character/Items/WeaponDropItem.h"
