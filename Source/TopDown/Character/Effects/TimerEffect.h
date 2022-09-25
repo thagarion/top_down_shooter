@@ -15,7 +15,6 @@ class TOPDOWN_API UTimerEffect : public UAbstractEffect {
 
 protected:
     FTimerHandle Timer;
-    UHealthComponent* HealthComponentPtr = nullptr;
 
     int TickCount = 0;
 

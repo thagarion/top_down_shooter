@@ -198,6 +198,18 @@ public:
                          TEXT("/Game/Blueprints/Widgets/Textures/T_Empty_Slot_Icon.T_Empty_Slot_Icon")));
 };
 
+UENUM(BlueprintType)
+enum class EEffectType : uint8 {
+    None UMETA(DisplayName = "None"),
+    Heal UMETA(DisplayName = "Heal"),
+    Regeneration UMETA(DisplayName = "Regeneration"),
+    Shield UMETA(DisplayName = "Shield"),
+    Shield_Regeneration UMETA(DisplayName = "Shield_Regeneration"),
+    Bleeding UMETA(DisplayName = "Bleeding"),
+    Invulnerability UMETA(DisplayName = "Invulnerability"),
+    Stun UMETA(DisplayName = "Stun"),
+};
+
 USTRUCT(BlueprintType)
 struct FEffectInfo : public FTableRowBase {
     GENERATED_BODY()
@@ -210,6 +222,8 @@ public:
     UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Class")
     TSubclassOf<class UAbstractEffect> EffectClass = nullptr;
 
+    UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "State")
+    EEffectType Type = EEffectType::None;
     UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "State")
     float Value = 0.f;
     UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "State")

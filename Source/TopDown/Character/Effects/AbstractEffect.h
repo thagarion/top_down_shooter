@@ -19,21 +19,20 @@ class TOPDOWN_API UAbstractEffect : public UObject {
 protected:
     bool IsActive = true;
     class ATopDownCharacter* CharacterPtr = nullptr;
+    class UHealthComponent* HealthComponentPtr = nullptr;
+
     std::shared_ptr<FEffectInfo> EffectInfo = nullptr;
 
 public:
     // Sets default values for this actor's properties
     UAbstractEffect() = default;
 
-    virtual void Init(class ATopDownCharacter* Actor, std::shared_ptr<FEffectInfo> Info) {
-        CharacterPtr = Actor;
-        EffectInfo = Info;
-    };
+    virtual void Init(class ATopDownCharacter* Actor, std::shared_ptr<FEffectInfo> Info);
 
     virtual bool GetIsActive() const { return IsActive; }
 
     UFUNCTION(BlueprintCallable)
-    FEffectInfo GetEffectInfo() { return *EffectInfo; }
+    FEffectInfo GetEffectInfo() const { return *EffectInfo; }
 
-    std::shared_ptr<FEffectInfo> GetEffectInfoPtr() { return EffectInfo; }
+    std::shared_ptr<FEffectInfo> GetEffectInfoPtr() const { return EffectInfo; }
 };

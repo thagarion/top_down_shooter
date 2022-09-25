@@ -9,6 +9,7 @@ AEffectDropItem::AEffectDropItem() {
 
     ParticleSystemCircle = CreateDefaultSubobject<UParticleSystemComponent>(TEXT("Circle"));
     ParticleSystemCircle->SetupAttachment(RootComponent);
+
     ParticleSystemEffect = CreateDefaultSubobject<UParticleSystemComponent>(TEXT("Effect"));
     ParticleSystemEffect->SetupAttachment(RootComponent);
 
@@ -27,4 +28,6 @@ void AEffectDropItem::Tick(float DeltaTime) {
 
 void AEffectDropItem::Init(std::shared_ptr<FEffectInfo> Info) {
     EffectInfo = Info;
+    ParticleSystemCircle->SetTemplate(EffectInfo->Circle);
+    ParticleSystemEffect->SetTemplate(EffectInfo->Effect);
 }

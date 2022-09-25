@@ -59,6 +59,10 @@ ATopDownCharacter::ATopDownCharacter() {
     // Create healht
     HealthComponent = CreateDefaultSubobject<UHealthComponent>(TEXT("Health"));
 
+    // Create Particle System
+    ParticleSystemEffect = CreateDefaultSubobject<UParticleSystemComponent>(TEXT("Effect"));
+    ParticleSystemEffect->SetupAttachment(RootComponent);
+
     // Activate ticking in order to update the cursor every frame.
     PrimaryActorTick.bCanEverTick = true;
     PrimaryActorTick.bStartWithTickEnabled = true;
@@ -236,6 +240,7 @@ void ATopDownCharacter::CollisionSphereBeginOverlap(UPrimitiveComponent* Overlap
     AEffectDropItem* EffectDropItem = Cast<AEffectDropItem>(OtherActor);
     if (EffectDropItem != nullptr) {
         auto EffectInfo = EffectDropItem->GetEffectInfoPtr();
+        ParticleSystemEffect->SetTemplate(EffectInfo->Effect);
         auto Effect = NewObject<UAbstractEffect>(GetTransientPackage(), EffectInfo->EffectClass);
         Effect->Init(this, EffectInfo);
         ActiveEffects.Add(Effect);
@@ -352,11 +357,18 @@ void ATopDownCharacter::CameraAimZoom() {
 }
 
 void ATopDownCharacter::EffectTick() {
-    for (auto& Effect : ActiveEffects) {
-        if (!Effect->GetIsActive()) {
-            ActiveEffects.Remove(Effect);
+    bool IsEffectChanged = false;
+    ActiveEffects.RemoveAll([](UAbstractEffect* Effect) { return !Effect->GetIsActive(); });
+    if (ActiveEffects.Num() <= 0) {
+        if (CurrentEffectType != EEffectType::None) {
+            CurrentEffectType = EEffectType::None;
+            ParticleSystemEffect->DeactivateSystem();
+            ParticleSystemEffect->ResetParticles();
         }
-        
+    } else if (CurrentEffectType != ActiveEffects.Last()->GetEffectInfoPtr()->Type) {
+        CurrentEffectType = ActiveEffects.Last()->GetEffectInfoPtr()->Type;
+        ParticleSystemEffect->SetTemplate(ActiveEffects.Last()->GetEffectInfoPtr()->Effect);
+        ParticleSystemEffect->ActivateSystem();
     }
 }
 

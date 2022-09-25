@@ -20,30 +20,39 @@ void UHealthComponent::BeginPlay() {
 
 void UHealthComponent::ApplyDamage(AActor* DamagedActor, float Damage, const UDamageType* DamageType,
                                    AController* InstigateBy, AActor* DamageCauser) {
-    float ShieldDamage = 0.f;
-    float HealthDamage = 0.f;
-    if (ShieldAmount >= Damage) {
-        ShieldDamage = Damage;
-        ShieldAmount -= Damage;
-    } else {
-        ShieldDamage = ShieldAmount;
-        HealthDamage = Damage - ShieldDamage;
-        CurrentHealth -= HealthDamage;
-        ShieldAmount = 0;
-    }
-    OnHealthChange.Broadcast(MaxHealth, CurrentHealth, ShieldAmount);
-    OnTakeDamage.Broadcast(HealthDamage, ShieldAmount);
-    if (CurrentHealth <= 0) {
-        OnDead.Broadcast();
-    }
+    ReduceHealthValue(Damage);
 }
 
 inline void UHealthComponent::AddHealthValue(float Value) {
     auto NewHealth = CurrentHealth + Value;
+    auto HealthAmount = Value;
     if (NewHealth >= MaxHealth) {
         CurrentHealth = MaxHealth;
+        HealthAmount = MaxHealth - NewHealth;
     } else {
         CurrentHealth = NewHealth;
     }
     OnHealthChange.Broadcast(MaxHealth, CurrentHealth, ShieldAmount);
+    OnTakeHeal.Broadcast(HealthAmount);
+}
+
+void UHealthComponent::ReduceHealthValue(float Value) {
+    if (!IsInvulnerable) {
+        float ShieldDamage = 0.f;
+        float HealthDamage = 0.f;
+        if (ShieldAmount >= Value) {
+            ShieldDamage = Value;
+            ShieldAmount -= Value;
+        } else {
+            ShieldDamage = ShieldAmount;
+            HealthDamage = Value - ShieldDamage;
+            CurrentHealth -= HealthDamage;
+            ShieldAmount = 0;
+        }
+        OnHealthChange.Broadcast(MaxHealth, CurrentHealth, ShieldAmount);
+        OnTakeDamage.Broadcast(HealthDamage + ShieldDamage);
+        if (CurrentHealth <= 0) {
+            OnDead.Broadcast();
+        }
+    }
 }
