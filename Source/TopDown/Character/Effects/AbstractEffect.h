@@ -7,6 +7,7 @@
 #include "CoreMinimal.h"
 #include "GameFramework/Actor.h"
 
+#include "TopDown/Character/TopDownCharacter.h"
 #include "TopDown/Util/Logger.h"
 #include "TopDown/Util/TopDownTypes.h"
 

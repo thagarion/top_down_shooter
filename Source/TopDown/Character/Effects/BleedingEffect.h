@@ -3,13 +3,14 @@
 #pragma once
 
 #include "CoreMinimal.h"
+
 #include "TopDown/Character/Effects/TimerEffect.h"
+
 #include "BleedingEffect.generated.h"
 
 UCLASS()
-class TOPDOWN_API UBleedingEffect : public UTimerEffect
-{
-	GENERATED_BODY()
+class TOPDOWN_API UBleedingEffect : public UTimerEffect {
+    GENERATED_BODY()
 
 protected:
     float Value = 0.f;
