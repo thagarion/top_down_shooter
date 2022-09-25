@@ -132,11 +132,13 @@ private:
     class UHealthComponent* HealthComponent = nullptr;
 
     /** Effect Particle Component **/
-    UPROPERTY(EditDefaultsOnly, Category = Particles)
+    UPROPERTY(Category = Effects, VisibleAnywhere, BlueprintReadOnly, meta = (AllowPrivateAccess = "true"))
     UParticleSystemComponent* ParticleSystemEffect = nullptr;
 
     UPROPERTY(Category = Effects, VisibleAnywhere, BlueprintReadOnly, meta = (AllowPrivateAccess = "true"))
     TArray<class UAbstractEffect*> ActiveEffects;
+
+    EEffectType CurrentEffectType = EEffectType::None;
 
     float XAxis = 0.0f;
     float YAxis = 0.0f;

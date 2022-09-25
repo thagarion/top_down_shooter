@@ -18,9 +18,9 @@ class TOPDOWN_API AEffectDropItem : public AAbstractItem {
     GENERATED_BODY()
 
 protected:
-    UPROPERTY(EditDefaultsOnly, Category = Particles)
+    UPROPERTY(Category = Effects, VisibleAnywhere, BlueprintReadOnly, meta = (AllowPrivateAccess = "true"))
     UParticleSystemComponent* ParticleSystemCircle;
-    UPROPERTY(EditDefaultsOnly, Category = Particles)
+    UPROPERTY(Category = Effects, VisibleAnywhere, BlueprintReadOnly, meta = (AllowPrivateAccess = "true"))
     UParticleSystemComponent* ParticleSystemEffect;
 
     std::shared_ptr<FEffectInfo> EffectInfo = nullptr;

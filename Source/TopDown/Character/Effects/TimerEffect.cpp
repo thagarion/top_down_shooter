@@ -14,7 +14,6 @@ inline void UTimerEffect::Tick() {
 
 void UTimerEffect::Init(class ATopDownCharacter* Actor, std::shared_ptr<FEffectInfo> Info) {
     UAbstractEffect::Init(Actor, Info);
-    HealthComponentPtr = CharacterPtr->GetHealthComponent();
     TickCount = Info->Seconds;
     auto World = CharacterPtr->GetWorld();
     if (World != nullptr) {

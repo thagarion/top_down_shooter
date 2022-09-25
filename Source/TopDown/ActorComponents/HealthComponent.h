@@ -8,7 +8,8 @@
 #include "HealthComponent.generated.h"
 
 DECLARE_DYNAMIC_MULTICAST_DELEGATE_ThreeParams(FOnHealthChange, float, MaxHealth, float, Health, float, Shield);
-DECLARE_DYNAMIC_MULTICAST_DELEGATE_TwoParams(FOnTakeDamage, float, HealthDamage, float, ShieldDamage);
+DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FOnTakeDamage, float, Damage);
+DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FOnTakeHeal, float, Value);
 DECLARE_DYNAMIC_MULTICAST_DELEGATE(FOnDead);
 
 UCLASS(ClassGroup = (Custom), meta = (BlueprintSpawnableComponent))
@@ -19,12 +20,15 @@ protected:
     float MaxHealth = 100.f;
     float CurrentHealth = MaxHealth * 0.2;
     float ShieldAmount = MaxHealth * 0.5;
+    bool IsInvulnerable = false;
 
 public:
     UPROPERTY(BlueprintAssignable)
     FOnHealthChange OnHealthChange;
     UPROPERTY(BlueprintAssignable)
     FOnTakeDamage OnTakeDamage;
+    UPROPERTY(BlueprintAssignable)
+    FOnTakeHeal OnTakeHeal;
     UPROPERTY(BlueprintAssignable)
     FOnDead OnDead;
 
@@ -33,20 +37,24 @@ public:
     UHealthComponent();
 
     UFUNCTION(BlueprintCallable)
-    float GetMaxHealth() { return CurrentHealth; }
+    float GetMaxHealth() const { return CurrentHealth; }
 
     UFUNCTION(BlueprintCallable)
-    float GetShieldAmount() { return ShieldAmount; }
+    float GetShieldAmount() const { return ShieldAmount; }
 
     UFUNCTION()
     void ApplyDamage(AActor* DamagedActor, float Damage, const UDamageType* DamageType, AController* InstigateBy,
                      AActor* DamageCauser);
 
-    UFUNCTION()
     void AddHealthValue(float Value);
-
-    UFUNCTION()
+    void ReduceHealthValue(float Value);
     void AddHealthPercent(float Value) { AddHealthValue(MaxHealth * Value / 100.f); }
+    void ReduceHealthPercent(float Value) { ReduceHealthValue(MaxHealth * Value / 100.f); }
+
+    bool SwitchInvulnerability() {
+        IsInvulnerable = !IsInvulnerable;
+        return IsInvulnerable;
+    }
 
 protected:
     // Called when the game starts
