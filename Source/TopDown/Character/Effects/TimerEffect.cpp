@@ -4,7 +4,7 @@
 
 #include "TopDown/Util/Logger.h"
 
-inline void UTimerEffect::Tick() {
+void UTimerEffect::Tick() {
     if (TickCount <= 0) {
         IsActive = false;
         return;

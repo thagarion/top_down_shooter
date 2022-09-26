@@ -23,7 +23,7 @@ void UHealthComponent::ApplyDamage(AActor* DamagedActor, float Damage, const UDa
     ReduceHealthValue(Damage);
 }
 
-inline void UHealthComponent::AddHealthValue(float Value) {
+void UHealthComponent::AddHealthValue(float Value) {
     auto NewHealth = CurrentHealth + Value;
     auto HealthAmount = Value;
     if (NewHealth >= MaxHealth) {
