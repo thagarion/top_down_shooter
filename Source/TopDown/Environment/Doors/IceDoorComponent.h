@@ -10,7 +10,8 @@
 #include "GameFramework/Actor.h"
 #include "Sound/SoundCue.h"
 
-#include "TopDown/Util/TopDownTypes.h"
+#include "TopDown/Util/Enums.h"
+#include "TopDown/Util/Types.h"
 
 #include "IceDoorComponent.generated.h"
 
