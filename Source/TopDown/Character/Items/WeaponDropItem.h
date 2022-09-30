@@ -8,7 +8,9 @@
 
 #include "TopDown/Character/Items/AbstractItem.h"
 #include "TopDown/Util/Logger.h"
-#include "TopDown/Util/TopDownTypes.h"
+#include "TopDown/Util/Types.h"
+#include "TopDown/Util/Enums.h"
+#include "TopDown/Util/Tables.h"
 
 #include "WeaponDropItem.generated.h"
 

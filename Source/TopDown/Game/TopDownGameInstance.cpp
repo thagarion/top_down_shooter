@@ -5,7 +5,7 @@
 #include "Math/UnrealMathUtility.h"
 
 #include "TopDown/Util/Logger.h"
-#include "TopDown/Util/TopDownTypes.h"
+#include "TopDown/Util/Types.h"
 
 bool UTopDownGameInstance::GetWeaponInfoByName(FName WeaponName, FWeaponInfo& WeaponInfo) {
     if (WeaponInfoTable == nullptr) {

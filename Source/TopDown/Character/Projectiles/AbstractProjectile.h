@@ -8,7 +8,7 @@
 #include "GameFramework/ProjectileMovementComponent.h"
 #include "Particles/ParticleSystemComponent.h"
 
-#include "TopDown/Util/TopDownTypes.h"
+#include "TopDown/Util/Types.h"
 
 #include "AbstractProjectile.generated.h"
 

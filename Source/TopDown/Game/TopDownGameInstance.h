@@ -7,7 +7,7 @@
 #include "Engine/GameInstance.h"
 
 #include "TopDown/Character/Weapons/AbstractWeapon.h"
-#include "TopDown/Util/TopDownTypes.h"
+#include "TopDown/Util/Types.h"
 
 #include "TopDownGameInstance.generated.h"
 

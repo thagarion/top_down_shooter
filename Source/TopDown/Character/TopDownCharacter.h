@@ -13,7 +13,7 @@
 #include "TopDown/ActorComponents/InventoryComponent.h"
 #include "TopDown/Character/Weapons/AbstractWeapon.h"
 #include "TopDown/Util/Logger.h"
-#include "TopDown/Util/TopDownTypes.h"
+#include "TopDown/Util/Types.h"
 
 #include "TopDownCharacter.generated.h"
 

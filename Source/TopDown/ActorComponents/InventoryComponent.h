@@ -10,7 +10,7 @@
 #include "CoreMinimal.h"
 
 #include "TopDown/Character/Items/ProjectileDropItem.h"
-#include "TopDown/Util/TopDownTypes.h"
+#include "TopDown/Util/Types.h"
 
 #include "InventoryComponent.generated.h"
 
