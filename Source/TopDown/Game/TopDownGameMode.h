@@ -3,12 +3,12 @@
 #pragma once
 
 #include "CoreMinimal.h"
-#include "GameFramework/GameModeBase.h"
+#include "GameFramework/GameMode.h"
 
 #include "TopDownGameMode.generated.h"
 
 UCLASS(minimalapi)
-class ATopDownGameMode : public AGameModeBase {
+class ATopDownGameMode : public AGameMode {
     GENERATED_BODY()
 
 public:

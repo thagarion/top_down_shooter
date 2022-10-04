@@ -96,6 +96,9 @@ public:
     UFUNCTION()
     void WeaponReloadEnd(bool IsSuccessed) { IsReloading = false; }
 
+    UFUNCTION(BlueprintCallable)
+    void Dead();
+
     // Only for Debug
     UFUNCTION(BlueprintCallable)
     void DropRandomWeapon();

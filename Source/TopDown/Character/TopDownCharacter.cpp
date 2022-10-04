@@ -168,6 +168,11 @@ void ATopDownCharacter::SlotInputButtonPressed(int SlotID) {
     }
 }
 
+void ATopDownCharacter::Dead() {
+    PlayerControllerPtr->bShowMouseCursor = true;
+    GetCursorToWorld()->SetVisibility(false);
+}
+
 void ATopDownCharacter::DropRandomWeapon() {
     if (GameInctance != nullptr) {
         auto WeaponInfo = std::make_shared<FWeaponInfo>();
