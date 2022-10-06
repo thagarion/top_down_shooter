@@ -2,6 +2,7 @@
 
 #include "TopDown/Character/TopDownCharacter.h"
 
+#include "Animation/AnimMontage.h"
 #include "Camera/CameraComponent.h"
 #include "Components/CapsuleComponent.h"
 #include "Components/DecalComponent.h"
@@ -89,32 +90,34 @@ void ATopDownCharacter::BeginPlay() {
 }
 
 void ATopDownCharacter::Tick(float DeltaSeconds) {
-    Super::Tick(DeltaSeconds);
+    if (IsAlive) {
+        Super::Tick(DeltaSeconds);
 
-    if (MovementState != EMovementState::SPRINT_State) {
-        if (CursorComponent != nullptr && PlayerControllerPtr != nullptr) {
-            FHitResult TraceHitResult;
-            PlayerControllerPtr->GetHitResultUnderCursor(ECC_Visibility, true, TraceHitResult);
-            FVector CursorFV = TraceHitResult.ImpactNormal;
-            FRotator CursorR = CursorFV.Rotation();
+        if (MovementState != EMovementState::SPRINT_State) {
+            if (CursorComponent != nullptr && PlayerControllerPtr != nullptr) {
+                FHitResult TraceHitResult;
+                PlayerControllerPtr->GetHitResultUnderCursor(ECC_Visibility, true, TraceHitResult);
+                FVector CursorFV = TraceHitResult.ImpactNormal;
+                FRotator CursorR = CursorFV.Rotation();
 
-            CursorComponent->SetWorldLocation(TraceHitResult.Location);
-            CursorComponent->SetWorldRotation(CursorR);
+                CursorComponent->SetWorldLocation(TraceHitResult.Location);
+                CursorComponent->SetWorldRotation(CursorR);
+            }
+
+            MovementTick(DeltaSeconds);
+        } else {
+            SprintForward();
         }
 
-        MovementTick(DeltaSeconds);
-    } else {
-        SprintForward();
+        if (CurrentWeapon != nullptr) {
+            CurrentWeapon->UpdateStateWeapon(MovementState);
+        }
+
+        EffectTick();
+
+        CameraZoom(DeltaSeconds);
+        CameraAimZoom();
     }
-
-    if (CurrentWeapon != nullptr) {
-        CurrentWeapon->UpdateStateWeapon(MovementState);
-    }
-
-    EffectTick();
-
-    CameraZoom(DeltaSeconds);
-    CameraAimZoom();
 }
 
 void ATopDownCharacter::SetupPlayerInputComponent(UInputComponent* InComponent) {
@@ -168,9 +171,21 @@ void ATopDownCharacter::SlotInputButtonPressed(int SlotID) {
     }
 }
 
-void ATopDownCharacter::Dead() {
-    PlayerControllerPtr->bShowMouseCursor = true;
+void ATopDownCharacter::Die() {
+    IsAlive = false;
     GetCursorToWorld()->SetVisibility(false);
+    PlayerControllerPtr->bShowMouseCursor = true;
+
+    float AnimationTime = 0.f;
+    auto Index = FMath::RandHelper(DeathMontages.Num());
+    if (DeathMontages.IsValidIndex(Index) && DeathMontages[Index] != nullptr) {
+        AnimationTime = DeathMontages[Index]->GetPlayLength() * 0.80;
+        GetMesh()->GetAnimInstance()->Montage_Play(DeathMontages[Index]);
+    }
+
+    GetWorldTimerManager().SetTimer(
+        DieAnimationTimer, [&, Index]() { GetMesh()->GetAnimInstance()->Montage_Pause(DeathMontages[Index]); },
+        AnimationTime, false);
 }
 
 void ATopDownCharacter::DropRandomWeapon() {

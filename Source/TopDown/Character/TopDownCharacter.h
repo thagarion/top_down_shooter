@@ -97,7 +97,7 @@ public:
     void WeaponReloadEnd(bool IsSuccessed) { IsReloading = false; }
 
     UFUNCTION(BlueprintCallable)
-    void Dead();
+    void Die();
 
     // Only for Debug
     UFUNCTION(BlueprintCallable)
@@ -132,12 +132,11 @@ private:
     /** Health Component **/
     UPROPERTY(Category = Health, VisibleAnywhere, BlueprintReadOnly, meta = (AllowPrivateAccess = "true"))
     class UHealthComponent* HealthComponent = nullptr;
+    
+    UPROPERTY(EditDefaultsOnly, Category = Health)
+    TArray<class UAnimMontage*> DeathMontages = {};
 
-    /** Effect Particle Component **/
-    UPROPERTY(Category = Effects, VisibleAnywhere, BlueprintReadOnly, meta = (AllowPrivateAccess = "true"))
-    UParticleSystemComponent* ParticleSystemEffect = nullptr;
-
-    UPROPERTY(Category = Effects, VisibleAnywhere, BlueprintReadOnly, meta = (AllowPrivateAccess = "true"))
+    class UParticleSystemComponent* ParticleSystemEffect = nullptr;
     TArray<class UAbstractEffect*> ActiveEffects;
 
     EEffectType CurrentEffectType = EEffectType::None;
@@ -168,6 +167,9 @@ private:
     std::vector<EMovementState> MovementStateStack = {EMovementState::RUN_State};
 
     APlayerController* PlayerControllerPtr = nullptr;
+
+    FTimerHandle DieAnimationTimer;
+    bool IsAlive = true;
 
     void MoveForwardInput(float Value) { XAxis = Value; }
     void MoveRightInput(float Value) { YAxis = Value; }
