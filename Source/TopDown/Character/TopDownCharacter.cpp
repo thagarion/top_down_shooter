@@ -23,6 +23,7 @@
 #include "TopDown/Character/Items/ProjectileDropItem.h"
 #include "TopDown/Character/Items/WeaponDropItem.h"
 #include "TopDown/Game/TopDownGameInstance.h"
+#include "TopDown/Game/TopDownGameMode.h"
 #include "TopDown/Util/Logger.h"
 
 ATopDownCharacter::ATopDownCharacter() {
@@ -127,6 +128,9 @@ void ATopDownCharacter::SetupPlayerInputComponent(UInputComponent* InComponent) 
     InComponent->BindAxis(TEXT("MoveRight"), this, &ATopDownCharacter::MoveRightInput);
     InComponent->BindAxis(TEXT("CameraZoom"), this, &ATopDownCharacter::CameraZoomInput);
 
+    InComponent->BindAction(TEXT("Fire"), EInputEvent::IE_Pressed, this, &ATopDownCharacter::FireButtonPressed);
+    InComponent->BindAction(TEXT("Fire"), EInputEvent::IE_Released, this, &ATopDownCharacter::FireButtonReleased);
+
     InComponent->BindAction(TEXT("Aim"), EInputEvent::IE_Pressed, this, &ATopDownCharacter::AimButtonPressed);
     InComponent->BindAction(TEXT("Aim"), EInputEvent::IE_Released, this, &ATopDownCharacter::AimButtonReleased);
 
@@ -171,11 +175,10 @@ void ATopDownCharacter::SlotInputButtonPressed(int SlotID) {
     }
 }
 
-void ATopDownCharacter::Die() {
+bool ATopDownCharacter::Die() {
     IsAlive = false;
     GetCursorToWorld()->SetVisibility(false);
     PlayerControllerPtr->bShowMouseCursor = true;
-
     float AnimationTime = 0.f;
     auto Index = FMath::RandHelper(DeathMontages.Num());
     if (DeathMontages.IsValidIndex(Index) && DeathMontages[Index] != nullptr) {
@@ -186,6 +189,16 @@ void ATopDownCharacter::Die() {
     GetWorldTimerManager().SetTimer(
         DieAnimationTimer, [&, Index]() { GetMesh()->GetAnimInstance()->Montage_Pause(DeathMontages[Index]); },
         AnimationTime, false);
+
+    auto GameMode = Cast<ATopDownGameMode>(UGameplayStatics::GetGameMode(GetWorld()));
+    return !GameMode->Respawn();
+}
+
+void ATopDownCharacter::Respawn() {
+    GetMesh()->GetAnimInstance()->Montage_Resume(GetMesh()->GetAnimInstance()->GetCurrentActiveMontage());
+    GetCursorToWorld()->SetVisibility(true);
+    PlayerControllerPtr->bShowMouseCursor = false;
+    IsAlive = true;
 }
 
 void ATopDownCharacter::DropRandomWeapon() {
@@ -426,3 +439,16 @@ void ATopDownCharacter::AttackEvent(bool IsFire) {
         Weapon->SetWeaponStateFire(IsFire);
     }
 }
+
+void ATopDownCharacter::FireButtonPressed() {
+    if (!IsReloading) {
+        AttackEvent(true);
+        if (MovementState == EMovementState::AIM_State) {
+            GetMesh()->GetAnimInstance()->Montage_Play(IronSightMontage);
+        } else {
+            GetMesh()->GetAnimInstance()->Montage_Play(HipMontage);
+        }
+    }
+}
+
+void ATopDownCharacter::FireButtonReleased() { AttackEvent(false); }

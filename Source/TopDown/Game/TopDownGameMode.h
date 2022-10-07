@@ -13,4 +13,7 @@ class ATopDownGameMode : public AGameMode {
 
 public:
     ATopDownGameMode();
+
+    UFUNCTION(BlueprintCallable)
+    bool Respawn();
 };

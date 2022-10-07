@@ -84,9 +84,9 @@ public:
     UFUNCTION(BlueprintCallable)
     void AttackEvent(bool IsFire);
     UFUNCTION(BlueprintCallable)
-    void FireButtonPressed() { AttackEvent(true); }
+    void FireButtonPressed();
     UFUNCTION(BlueprintCallable)
-    void FireButtonReleased() { AttackEvent(false); }
+    void FireButtonReleased();
     UFUNCTION(BlueprintCallable)
     void ReloadButtonPressed();
     UFUNCTION(BlueprintCallable)
@@ -97,7 +97,9 @@ public:
     void WeaponReloadEnd(bool IsSuccessed) { IsReloading = false; }
 
     UFUNCTION(BlueprintCallable)
-    void Die();
+    bool Die();
+    UFUNCTION(BlueprintCallable)
+    void Respawn();
 
     // Only for Debug
     UFUNCTION(BlueprintCallable)
@@ -133,8 +135,12 @@ private:
     UPROPERTY(Category = Health, VisibleAnywhere, BlueprintReadOnly, meta = (AllowPrivateAccess = "true"))
     class UHealthComponent* HealthComponent = nullptr;
     
-    UPROPERTY(EditDefaultsOnly, Category = Health)
+    UPROPERTY(EditDefaultsOnly, Category = Montages)
     TArray<class UAnimMontage*> DeathMontages = {};
+    UPROPERTY(EditDefaultsOnly, Category = Montages)
+    class UAnimMontage* IronSightMontage = nullptr;
+    UPROPERTY(EditDefaultsOnly, Category = Montages)
+    class UAnimMontage* HipMontage = nullptr;
 
     class UParticleSystemComponent* ParticleSystemEffect = nullptr;
     TArray<class UAbstractEffect*> ActiveEffects;

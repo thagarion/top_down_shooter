@@ -2,9 +2,11 @@
 
 #include "TopDownGameMode.h"
 
+#include "Kismet/GameplayStatics.h"
 #include "UObject/ConstructorHelpers.h"
 
 #include "TopDown/Character/TopDownCharacter.h"
+#include "TopDown/Game/TopDownGameState.h"
 #include "TopDown/Game/TopDownPlayerController.h"
 
 ATopDownGameMode::ATopDownGameMode() {
@@ -16,4 +18,14 @@ ATopDownGameMode::ATopDownGameMode() {
     if (PlayerPawnBPClass.Class != NULL) {
         DefaultPawnClass = PlayerPawnBPClass.Class;
     }
+}
+
+bool ATopDownGameMode::Respawn() {
+    const auto TopDownGameState = Cast<ATopDownGameState>(GameState);
+    if (TopDownGameState != nullptr && TopDownGameState->CanRespawn()) {
+        auto PlayerControllerPtr = UGameplayStatics::GetPlayerController(GetWorld(), 0);
+        RestartPlayerAtPlayerStart(PlayerControllerPtr, FindPlayerStart(PlayerControllerPtr, "PlayerStart"));
+        return true;
+    }
+    return false;
 }
