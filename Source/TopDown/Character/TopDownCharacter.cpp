@@ -178,7 +178,6 @@ void ATopDownCharacter::SlotInputButtonPressed(int SlotID) {
 bool ATopDownCharacter::Die() {
     IsAlive = false;
     GetCursorToWorld()->SetVisibility(false);
-    PlayerControllerPtr->bShowMouseCursor = true;
     float AnimationTime = 0.f;
     auto Index = FMath::RandHelper(DeathMontages.Num());
     if (DeathMontages.IsValidIndex(Index) && DeathMontages[Index] != nullptr) {
@@ -197,7 +196,6 @@ bool ATopDownCharacter::Die() {
 void ATopDownCharacter::Respawn() {
     GetMesh()->GetAnimInstance()->Montage_Resume(GetMesh()->GetAnimInstance()->GetCurrentActiveMontage());
     GetCursorToWorld()->SetVisibility(true);
-    PlayerControllerPtr->bShowMouseCursor = false;
     IsAlive = true;
 }
 
@@ -441,7 +439,7 @@ void ATopDownCharacter::AttackEvent(bool IsFire) {
 }
 
 void ATopDownCharacter::FireButtonPressed() {
-    if (!IsReloading) {
+    if (IsAlive && !IsReloading) {
         AttackEvent(true);
         if (MovementState == EMovementState::AIM_State) {
             GetMesh()->GetAnimInstance()->Montage_Play(IronSightMontage);
@@ -451,4 +449,8 @@ void ATopDownCharacter::FireButtonPressed() {
     }
 }
 
-void ATopDownCharacter::FireButtonReleased() { AttackEvent(false); }
+void ATopDownCharacter::FireButtonReleased() {
+    if (IsAlive) {
+        AttackEvent(false);
+    }
+}

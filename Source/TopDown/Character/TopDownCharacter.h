@@ -162,7 +162,7 @@ private:
     AAbstractWeapon* CurrentWeapon = nullptr;
     AWeaponDropItem* WeaponDropItem = nullptr;
 
-    float CameraHeight = HeightMax;
+    float CameraHeight = HeightMax/2;
     float CameraZoomStep = 50.0f;
     FVector CameraInitialLocation;
 
