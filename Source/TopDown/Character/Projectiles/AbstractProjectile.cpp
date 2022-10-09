@@ -87,7 +87,6 @@ void AAbstractProjectile::BulletCollisionSphereHit(UPrimitiveComponent* HitCompo
     }
 
     UGameplayStatics::ApplyDamage(OtherActor, ProjectileSetting.Damage, GetInstigatorController(), this, nullptr);
-    UE_DEBUG_MESSAGE("ApplyDamage %f", ProjectileSetting.Damage);
 
     Destroy();
 }

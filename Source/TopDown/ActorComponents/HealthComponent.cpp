@@ -21,6 +21,7 @@ void UHealthComponent::BeginPlay() {
 void UHealthComponent::ApplyDamage(AActor* DamagedActor, float Damage, const UDamageType* DamageType,
                                    AController* InstigateBy, AActor* DamageCauser) {
     ReduceHealthValue(Damage);
+    UE_DEBUG_MESSAGE("ApplyDamage");
 }
 
 void UHealthComponent::AddHealthValue(float Value) {

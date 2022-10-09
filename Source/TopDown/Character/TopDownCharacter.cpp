@@ -66,7 +66,8 @@ ATopDownCharacter::ATopDownCharacter() {
     ParticleSystemEffect = CreateDefaultSubobject<UParticleSystemComponent>(TEXT("Effect"));
     ParticleSystemEffect->SetupAttachment(RootComponent);
 
-    // Activate ticking in order to update the cursor every frame.
+    // Set this character to call Tick() every frame.
+    // You can turn this off to improve performance if you don't need it.
     PrimaryActorTick.bCanEverTick = true;
     PrimaryActorTick.bStartWithTickEnabled = true;
 }
