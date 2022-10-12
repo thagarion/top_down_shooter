@@ -3,6 +3,7 @@
 #include "TopDown/Character/ZombieCharacter.h"
 
 #include "Components/CapsuleComponent.h"
+#include "Components/WidgetComponent.h"
 
 #include "TopDown/ActorComponents/HealthComponent.h"
 #include "TopDown/Util/Logger.h"
@@ -14,6 +15,12 @@ AZombieCharacter::AZombieCharacter() {
 
     // Create healht
     HealthComponent = CreateDefaultSubobject<UHealthComponent>(TEXT("Health"));
+
+    HealthBarWidgetComponent = CreateDefaultSubobject<UWidgetComponent>(TEXT("Health Bar Widget"));
+    HealthBarWidgetComponent->SetupAttachment(RootComponent);
+    HealthBarWidgetComponent->SetWidgetSpace(EWidgetSpace::Screen);
+    HealthBarWidgetComponent->SetDrawSize({100.f, 300.f});
+   // HealthBarWidgetComponent->AddRelativeLocation({0, 0, 150.f});
 
     // Set this character to call Tick() every frame.
     // You can turn this off to improve performance if you don't need it.

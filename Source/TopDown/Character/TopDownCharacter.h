@@ -134,7 +134,11 @@ private:
     /** Health Component **/
     UPROPERTY(Category = Health, VisibleAnywhere, BlueprintReadOnly, meta = (AllowPrivateAccess = "true"))
     class UHealthComponent* HealthComponent = nullptr;
-    
+
+    /** Health Bar Widget **/
+    UPROPERTY(Category = Health, VisibleAnywhere, BlueprintReadOnly, meta = (AllowPrivateAccess = "true"))
+    class UWidgetComponent* HealthBarWidgetComponent = nullptr;
+
     UPROPERTY(EditDefaultsOnly, Category = Montages)
     TArray<class UAnimMontage*> DeathMontages = {};
     UPROPERTY(EditDefaultsOnly, Category = Montages)
@@ -162,7 +166,7 @@ private:
     AAbstractWeapon* CurrentWeapon = nullptr;
     AWeaponDropItem* WeaponDropItem = nullptr;
 
-    float CameraHeight = HeightMax/2;
+    float CameraHeight = HeightMax / 2;
     float CameraZoomStep = 50.0f;
     FVector CameraInitialLocation;
 

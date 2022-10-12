@@ -32,4 +32,8 @@ private:
     /** Health Component **/
     UPROPERTY(Category = Health, VisibleAnywhere, BlueprintReadOnly, meta = (AllowPrivateAccess = "true"))
     class UHealthComponent* HealthComponent = nullptr;
+
+    /** Health Bar Widget **/
+    UPROPERTY(Category = Health, VisibleAnywhere, BlueprintReadOnly, meta = (AllowPrivateAccess = "true"))
+    class UWidgetComponent* HealthBarWidgetComponent = nullptr;
 };

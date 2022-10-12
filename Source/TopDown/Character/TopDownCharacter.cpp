@@ -18,6 +18,7 @@
 #include "Particles/ParticleSystemComponent.h"
 #include "UObject/ConstructorHelpers.h"
 
+#include "TopDown/ActorComponents/HealthComponent.h"
 #include "TopDown/Character/Effects/AbstractEffect.h"
 #include "TopDown/Character/Items/EffectDropItem.h"
 #include "TopDown/Character/Items/ProjectileDropItem.h"
@@ -61,6 +62,13 @@ ATopDownCharacter::ATopDownCharacter() {
 
     // Create healht
     HealthComponent = CreateDefaultSubobject<UHealthComponent>(TEXT("Health"));
+
+    // Health Bar Widget
+    HealthBarWidgetComponent = CreateDefaultSubobject<UWidgetComponent>(TEXT("Health Bar Widget"));
+    HealthBarWidgetComponent->SetupAttachment(RootComponent);
+    HealthBarWidgetComponent->SetWidgetSpace(EWidgetSpace::Screen);
+    HealthBarWidgetComponent->SetDrawSize({100.f, 300.f});
+    //HealthBarWidgetComponent->AddRelativeLocation({0, 0, 150.f});
 
     // Create Particle System
     ParticleSystemEffect = CreateDefaultSubobject<UParticleSystemComponent>(TEXT("Effect"));
