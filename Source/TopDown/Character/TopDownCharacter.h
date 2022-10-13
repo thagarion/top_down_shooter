@@ -11,6 +11,7 @@
 
 #include "TopDown/ActorComponents/HealthComponent.h"
 #include "TopDown/ActorComponents/InventoryComponent.h"
+#include "TopDown/Character/AbstractCharacter.h"
 #include "TopDown/Character/Weapons/AbstractWeapon.h"
 #include "TopDown/Util/Logger.h"
 #include "TopDown/Util/Types.h"
@@ -23,7 +24,7 @@ DECLARE_DYNAMIC_MULTICAST_DELEGATE(FOnWeaponSwitchDefault);
 DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FOnWeaponSwitch, FWeaponSlot, WeaponInfo);
 
 UCLASS(Blueprintable)
-class ATopDownCharacter : public ACharacter {
+class ATopDownCharacter : public AAbstractCharacter {
     GENERATED_BODY()
 
 public:
@@ -49,8 +50,6 @@ public:
     FORCEINLINE class UDecalComponent* GetCursorToWorld() { return CursorComponent; }
     /** Returns InventoryComponent subobject **/
     FORCEINLINE class UInventoryComponent* GetInventoryComponent() const { return InventoryComponent; }
-    /** Returns HealthComponent subobject **/
-    FORCEINLINE class UHealthComponent* GetHealthComponent() const { return HealthComponent; }
 
     UPROPERTY(EditDefaultsOnly, Category = Camera)
     float HeightMax = 2000.0f;
@@ -96,18 +95,9 @@ public:
     UFUNCTION()
     void WeaponReloadEnd(bool IsSuccessed) { IsReloading = false; }
 
-    UFUNCTION(BlueprintCallable)
-    bool Die();
+    bool Die() override;
     UFUNCTION(BlueprintCallable)
     void Respawn();
-
-    // Only for Debug
-    UFUNCTION(BlueprintCallable)
-    void DropRandomWeapon();
-    UFUNCTION(BlueprintCallable)
-    void DropRandomProjectile();
-    UFUNCTION(BlueprintCallable)
-    void DropRandomEffect();
 
 protected:
     UFUNCTION()
@@ -131,16 +121,6 @@ private:
     UPROPERTY(Category = Inventory, VisibleAnywhere, BlueprintReadOnly, meta = (AllowPrivateAccess = "true"))
     class UInventoryComponent* InventoryComponent = nullptr;
 
-    /** Health Component **/
-    UPROPERTY(Category = Health, VisibleAnywhere, BlueprintReadOnly, meta = (AllowPrivateAccess = "true"))
-    class UHealthComponent* HealthComponent = nullptr;
-
-    /** Health Bar Widget **/
-    UPROPERTY(Category = Health, VisibleAnywhere, BlueprintReadOnly, meta = (AllowPrivateAccess = "true"))
-    class UWidgetComponent* HealthBarWidgetComponent = nullptr;
-
-    UPROPERTY(EditDefaultsOnly, Category = Montages)
-    TArray<class UAnimMontage*> DeathMontages = {};
     UPROPERTY(EditDefaultsOnly, Category = Montages)
     class UAnimMontage* IronSightMontage = nullptr;
     UPROPERTY(EditDefaultsOnly, Category = Montages)
@@ -159,8 +139,6 @@ private:
 
     FRotator CurrentRotation;
 
-    class UTopDownGameInstance* GameInctance = nullptr;
-
     class UDecalComponent* CursorComponent = nullptr;
 
     AAbstractWeapon* CurrentWeapon = nullptr;
@@ -177,9 +155,6 @@ private:
     std::vector<EMovementState> MovementStateStack = {EMovementState::RUN_State};
 
     APlayerController* PlayerControllerPtr = nullptr;
-
-    FTimerHandle DieAnimationTimer;
-    bool IsAlive = true;
 
     void MoveForwardInput(float Value) { XAxis = Value; }
     void MoveRightInput(float Value) { YAxis = Value; }

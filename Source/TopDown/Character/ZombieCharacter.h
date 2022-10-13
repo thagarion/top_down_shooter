@@ -5,11 +5,17 @@
 #include "CoreMinimal.h"
 #include "GameFramework/Character.h"
 
+#include "TopDown/Character/AbstractCharacter.h"
+
 #include "ZombieCharacter.generated.h"
 
 UCLASS()
-class TOPDOWN_API AZombieCharacter : public ACharacter {
+class TOPDOWN_API AZombieCharacter : public AAbstractCharacter {
     GENERATED_BODY()
+
+private:
+    TArray<AActor*> PlayerActors;
+    int32 PlayerIndex = 0;
 
 public:
     // Sets default values for this character's properties
@@ -21,19 +27,11 @@ public:
     // Called to bind functionality to input
     virtual void SetupPlayerInputComponent(class UInputComponent* PlayerInputComponent) override;
 
+    bool Die() override;
+
 protected:
     // Called when the game starts or when spawned
     virtual void BeginPlay() override;
 
-    void CollisionSphereHit(UPrimitiveComponent* HitComponent, AActor* OtherActor, UPrimitiveComponent* OtherComponent,
-                            FVector NormalImpulse, const FHitResult& Hit);
-
-private:
-    /** Health Component **/
-    UPROPERTY(Category = Health, VisibleAnywhere, BlueprintReadOnly, meta = (AllowPrivateAccess = "true"))
-    class UHealthComponent* HealthComponent = nullptr;
-
-    /** Health Bar Widget **/
-    UPROPERTY(Category = Health, VisibleAnywhere, BlueprintReadOnly, meta = (AllowPrivateAccess = "true"))
-    class UWidgetComponent* HealthBarWidgetComponent = nullptr;
+    void MovementTick(float DeltaTime);
 };

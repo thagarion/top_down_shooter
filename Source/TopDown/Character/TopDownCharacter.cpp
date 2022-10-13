@@ -21,26 +21,14 @@
 #include "TopDown/ActorComponents/HealthComponent.h"
 #include "TopDown/Character/Effects/AbstractEffect.h"
 #include "TopDown/Character/Items/EffectDropItem.h"
-#include "TopDown/Character/Items/ProjectileDropItem.h"
-#include "TopDown/Character/Items/WeaponDropItem.h"
-#include "TopDown/Game/TopDownGameInstance.h"
 #include "TopDown/Game/TopDownGameMode.h"
 #include "TopDown/Util/Logger.h"
 
-ATopDownCharacter::ATopDownCharacter() {
-    // Set size for player capsule
-    GetCapsuleComponent()->InitCapsuleSize(42.f, 96.0f);
-
+ATopDownCharacter::ATopDownCharacter() : AAbstractCharacter() {
     // Don't rotate character to camera direction
     bUseControllerRotationPitch = false;
     bUseControllerRotationYaw = false;
     bUseControllerRotationRoll = false;
-
-    // Configure character movement
-    GetCharacterMovement()->bOrientRotationToMovement = true;  // Rotate character to moving direction
-    GetCharacterMovement()->RotationRate = FRotator(0.f, 640.f, 0.f);
-    GetCharacterMovement()->bConstrainToPlane = true;
-    GetCharacterMovement()->bSnapToPlaneAtStart = true;
 
     // Create a camera boom
     CameraBoom = CreateDefaultSubobject<USpringArmComponent>(TEXT("CameraBoom"));
@@ -60,16 +48,6 @@ ATopDownCharacter::ATopDownCharacter() {
     // Create inventory
     InventoryComponent = CreateDefaultSubobject<UInventoryComponent>(TEXT("Inventory"));
 
-    // Create healht
-    HealthComponent = CreateDefaultSubobject<UHealthComponent>(TEXT("Health"));
-
-    // Health Bar Widget
-    HealthBarWidgetComponent = CreateDefaultSubobject<UWidgetComponent>(TEXT("Health Bar Widget"));
-    HealthBarWidgetComponent->SetupAttachment(RootComponent);
-    HealthBarWidgetComponent->SetWidgetSpace(EWidgetSpace::Screen);
-    HealthBarWidgetComponent->SetDrawSize({100.f, 300.f});
-    //HealthBarWidgetComponent->AddRelativeLocation({0, 0, 150.f});
-
     // Create Particle System
     ParticleSystemEffect = CreateDefaultSubobject<UParticleSystemComponent>(TEXT("Effect"));
     ParticleSystemEffect->SetupAttachment(RootComponent);
@@ -83,8 +61,6 @@ ATopDownCharacter::ATopDownCharacter() {
 void ATopDownCharacter::BeginPlay() {
     Super::BeginPlay();
 
-    GameInctance = Cast<UTopDownGameInstance>(GetOwner()->GetGameInstance());
-
     InventoryComponent->SetDefaultWeapon(DefaultWeaponName);
     SetCurrentWeapon();
 
@@ -94,7 +70,6 @@ void ATopDownCharacter::BeginPlay() {
 
     PlayerControllerPtr = UGameplayStatics::GetPlayerController(GetWorld(), 0);
 
-    // GetCapsuleComponent()->OnComponentHit.AddDynamic(this, &ATopDownCharacter::CollisionSphereHit);
     GetCapsuleComponent()->OnComponentBeginOverlap.AddDynamic(this, &ATopDownCharacter::CollisionSphereBeginOverlap);
     GetCapsuleComponent()->OnComponentEndOverlap.AddDynamic(this, &ATopDownCharacter::CollisionSphereEndOverlap);
 }
@@ -185,19 +160,9 @@ void ATopDownCharacter::SlotInputButtonPressed(int SlotID) {
 }
 
 bool ATopDownCharacter::Die() {
-    IsAlive = false;
+    AAbstractCharacter::Die();
+
     GetCursorToWorld()->SetVisibility(false);
-    float AnimationTime = 0.f;
-    auto Index = FMath::RandHelper(DeathMontages.Num());
-    if (DeathMontages.IsValidIndex(Index) && DeathMontages[Index] != nullptr) {
-        AnimationTime = DeathMontages[Index]->GetPlayLength() * 0.80;
-        GetMesh()->GetAnimInstance()->Montage_Play(DeathMontages[Index]);
-    }
-
-    GetWorldTimerManager().SetTimer(
-        DieAnimationTimer, [&, Index]() { GetMesh()->GetAnimInstance()->Montage_Pause(DeathMontages[Index]); },
-        AnimationTime, false);
-
     auto GameMode = Cast<ATopDownGameMode>(UGameplayStatics::GetGameMode(GetWorld()));
     return !GameMode->Respawn();
 }
@@ -206,61 +171,6 @@ void ATopDownCharacter::Respawn() {
     GetMesh()->GetAnimInstance()->Montage_Resume(GetMesh()->GetAnimInstance()->GetCurrentActiveMontage());
     GetCursorToWorld()->SetVisibility(true);
     IsAlive = true;
-}
-
-void ATopDownCharacter::DropRandomWeapon() {
-    if (GameInctance != nullptr) {
-        auto WeaponInfo = std::make_shared<FWeaponInfo>();
-        if (GameInctance->GetRandomWeaponInfo(*WeaponInfo) && WeaponInfo->WeaponClass != nullptr) {
-            FVector CursorLocation = CursorComponent->GetComponentLocation();
-            FVector SpawnLocation = FVector{CursorLocation.X, CursorLocation.Y, 1000.f};
-            FRotator SpawnRotation = GetActorRotation();
-            FTransform SpawnTransform = {SpawnRotation, SpawnLocation};
-            AWeaponDropItem* WeaponItem =
-                GetWorld()->SpawnActorDeferred<AWeaponDropItem>(WeaponInfo->AmmoCrateClass, SpawnTransform);
-            if (WeaponItem != nullptr) {
-                WeaponItem->Init(WeaponInfo);
-                WeaponItem->FinishSpawning(FTransform(SpawnRotation, SpawnLocation));
-            }
-        }
-    }
-}
-
-void ATopDownCharacter::DropRandomProjectile() {
-    if (GameInctance != nullptr) {
-        auto WeaponInfo = std::make_shared<FWeaponInfo>();
-        if (GameInctance->GetRandomWeaponInfo(*WeaponInfo) && WeaponInfo->WeaponClass != nullptr) {
-            FVector CursorLocation = CursorComponent->GetComponentLocation();
-            FVector SpawnLocation = FVector{CursorLocation.X, CursorLocation.Y, 1000.f};
-            FRotator SpawnRotation = GetActorRotation();
-            FTransform SpawnTransform = {SpawnRotation, SpawnLocation};
-            AProjectileDropItem* ProjectileItem =
-                GetWorld()->SpawnActorDeferred<AProjectileDropItem>(WeaponInfo->ProjectileCrateClass, SpawnTransform);
-            if (ProjectileItem != nullptr) {
-                auto Stats = std::make_shared<FWeaponStats>();
-                Stats->StoredProjectileCount = FMath::RandRange(1, WeaponInfo->MaxProjectileCount);
-                ProjectileItem->Init(WeaponInfo, Stats);
-                ProjectileItem->FinishSpawning(FTransform(SpawnRotation, SpawnLocation));
-            }
-        }
-    }
-}
-
-void ATopDownCharacter::DropRandomEffect() {
-    if (GameInctance != nullptr) {
-        auto EffectInfo = std::make_shared<FEffectInfo>();
-        if (GameInctance->GetRandomEffectInfo(*EffectInfo) && EffectInfo->EffectClass != nullptr) {
-            FVector CursorLocation = CursorComponent->GetComponentLocation();
-            FVector SpawnLocation = FVector{CursorLocation.X, CursorLocation.Y, 1000.f};
-            FRotator SpawnRotation = GetActorRotation();
-            FTransform SpawnTransform = {SpawnRotation, SpawnLocation};
-            auto* EffectItem = GetWorld()->SpawnActorDeferred<AEffectDropItem>(EffectInfo->DropClass, SpawnTransform);
-            if (EffectItem != nullptr) {
-                EffectItem->Init(EffectInfo);
-                EffectItem->FinishSpawning(FTransform(SpawnRotation, SpawnLocation));
-            }
-        }
-    }
 }
 
 void ATopDownCharacter::CollisionSphereBeginOverlap(UPrimitiveComponent* OverlapComponent, AActor* OtherActor,

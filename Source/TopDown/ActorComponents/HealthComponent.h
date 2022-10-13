@@ -21,6 +21,7 @@ protected:
     float CurrentHealth = MaxHealth * 0.2;
     float ShieldAmount = MaxHealth * 0.5;
     bool IsInvulnerable = false;
+    bool IsAlive = true;
 
 public:
     UPROPERTY(BlueprintAssignable)

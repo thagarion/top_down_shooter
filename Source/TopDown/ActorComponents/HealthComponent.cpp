@@ -21,24 +21,25 @@ void UHealthComponent::BeginPlay() {
 void UHealthComponent::ApplyDamage(AActor* DamagedActor, float Damage, const UDamageType* DamageType,
                                    AController* InstigateBy, AActor* DamageCauser) {
     ReduceHealthValue(Damage);
-    UE_DEBUG_MESSAGE("ApplyDamage %f", Damage);
 }
 
 void UHealthComponent::AddHealthValue(float Value) {
-    auto NewHealth = CurrentHealth + Value;
-    auto HealthAmount = Value;
-    if (NewHealth >= MaxHealth) {
-        CurrentHealth = MaxHealth;
-        HealthAmount = MaxHealth - NewHealth;
-    } else {
-        CurrentHealth = NewHealth;
+    if (IsAlive) {
+        auto NewHealth = CurrentHealth + Value;
+        auto HealthAmount = Value;
+        if (NewHealth >= MaxHealth) {
+            CurrentHealth = MaxHealth;
+            HealthAmount = MaxHealth - NewHealth;
+        } else {
+            CurrentHealth = NewHealth;
+        }
+        OnHealthChange.Broadcast(MaxHealth, CurrentHealth, ShieldAmount);
+        OnTakeHeal.Broadcast(HealthAmount);
     }
-    OnHealthChange.Broadcast(MaxHealth, CurrentHealth, ShieldAmount);
-    OnTakeHeal.Broadcast(HealthAmount);
 }
 
 void UHealthComponent::ReduceHealthValue(float Value) {
-    if (!IsInvulnerable) {
+    if (!IsInvulnerable && IsAlive) {
         float ShieldDamage = 0.f;
         float HealthDamage = 0.f;
         if (ShieldAmount >= Value) {
@@ -54,6 +55,7 @@ void UHealthComponent::ReduceHealthValue(float Value) {
         OnTakeDamage.Broadcast(HealthDamage + ShieldDamage);
         if (CurrentHealth <= 0) {
             OnDead.Broadcast();
+            IsAlive = false;
         }
     }
 }
