@@ -2,9 +2,10 @@
 
 #include "TopDown/Character/ZombieCharacter.h"
 
+#include "AIController.h"
 #include "Blueprint/AIBlueprintHelperLibrary.h"
-#include "Kismet/GameplayStatics.h"
 #include "GameFramework/CharacterMovementComponent.h"
+#include "Kismet/GameplayStatics.h"
 
 #include "TopDown/Character/TopDownCharacter.h"
 #include "TopDown/Util/Logger.h"
@@ -20,7 +21,10 @@ void AZombieCharacter::MovementTick(float DeltaTime) {
         UGameplayStatics::GetAllActorsOfClass(GetWorld(), ATopDownCharacter::StaticClass(), PlayerActors);
     }
     if (IsValid(PlayerActors[PlayerIndex])) {
-        UAIBlueprintHelperLibrary::SimpleMoveToActor(GetController(), PlayerActors[PlayerIndex]);
+        auto AIController = Cast<AAIController>(GetController());
+        if (AIController != nullptr) {
+            AIController->MoveToLocation(PlayerActors[PlayerIndex]->GetActorLocation(), 50.f);
+        }
     }
 }
 
@@ -53,7 +57,6 @@ bool AZombieCharacter::Die() {
                 break;
         }
 
-        //GetCharacterMovement()->MaxWalkSpeed = 0;
         GetCharacterMovement()->StopMovementImmediately();
 
         return Super::Die();

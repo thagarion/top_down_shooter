@@ -25,6 +25,9 @@ public:
 
     virtual void Init(const FProjectileInfo& ProjectileInfo);
 
+    float GetCritChance() const { return ProjectileSetting.CritChance; }
+    float GetCritDamage() const { return ProjectileSetting.CritDamage; }
+
     UPROPERTY(VisibleAnywhere, BlueprintReadOnly, meta = (AllowPrivateAccess = "true"), Category = Components)
     class UStaticMeshComponent* BulletMesh = nullptr;
     UPROPERTY(VisibleAnywhere, BlueprintReadOnly, meta = (AllowPrivateAccess = "true"), Category = Components)

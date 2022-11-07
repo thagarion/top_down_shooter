@@ -17,9 +17,13 @@ class TOPDOWN_API UHealthComponent : public UActorComponent {
     GENERATED_BODY()
 
 protected:
-    float MaxHealth = 100.f;
-    float CurrentHealth = MaxHealth * 0.2;
-    float ShieldAmount = MaxHealth * 0.5;
+    UPROPERTY(EditDefaultsOnly, Category = Health)
+    float MaxHealth = 0.f;
+    UPROPERTY(EditDefaultsOnly, Category = Health)
+    float ShieldAmount = 0.f;
+
+    float CurrentHealth = 0.f;
+
     bool IsInvulnerable = false;
     bool IsAlive = true;
 

@@ -2,6 +2,7 @@
 
 #include "TopDown/ActorComponents/HealthComponent.h"
 
+#include "TopDown/Character/Projectiles/AbstractProjectile.h"
 #include "TopDown/Util/Logger.h"
 
 // Sets default values for this component's properties
@@ -15,12 +16,18 @@ UHealthComponent::UHealthComponent() {
 void UHealthComponent::BeginPlay() {
     Super::BeginPlay();
 
+    CurrentHealth = MaxHealth;
     GetOwner()->OnTakeAnyDamage.AddDynamic(this, &UHealthComponent::ApplyDamage);
 }
 
 void UHealthComponent::ApplyDamage(AActor* DamagedActor, float Damage, const UDamageType* DamageType,
                                    AController* InstigateBy, AActor* DamageCauser) {
-    ReduceHealthValue(Damage);
+    auto NewDamage = Damage;
+    const auto Projectile = Cast<AAbstractProjectile>(DamageCauser);
+    if (Projectile != nullptr && FMath::SRand() <= Projectile->GetCritChance()) {
+        NewDamage *= Projectile->GetCritDamage();
+    } 
+    ReduceHealthValue(NewDamage);
 }
 
 void UHealthComponent::AddHealthValue(float Value) {
